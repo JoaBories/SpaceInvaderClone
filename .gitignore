@@ -4,3 +4,9 @@ UserSettings/
 Library/
 
 Logs/
+
+Temp/
+
+obj/
+
+.vs/
