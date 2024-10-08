@@ -120,4 +120,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 8151590333817679765, guid: 5fad1f01307bd7d4e9da3a8f5fdcc8ec, type: 3}
   shootCooldown: 1
-  shootOdd: 4
+  shootOdd: 2

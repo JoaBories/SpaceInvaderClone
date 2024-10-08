@@ -9,6 +9,8 @@ public class player : MonoBehaviour
     public GameObject bulletPrefab;
 
     public float speed;
+    bool canMove = true;
+    bool invincibility = false;
 
     GameObject currentBullet;
 
@@ -22,27 +24,51 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (canMove)
         {
-            if(transform.position.x < MaxRight.transform.position.x)
+            if (Input.GetKey(KeyCode.RightArrow))
             {
-                transform.position += new Vector3(speed*Time.deltaTime, 0, 0);
+                if (transform.position.x < MaxRight.transform.position.x)
+                {
+                    transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
+                }
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                if (transform.position.x > MaxLeft.transform.position.x)
+                {
+                    transform.position -= new Vector3(speed * Time.deltaTime, 0, 0);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (!currentBullet.activeSelf)
+                {
+                    Destroy(currentBullet);
+                    currentBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+                }
             }
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+    }
+
+    public void respawn()
+    {
+        transform.position = new Vector3(0, -4, 0); 
+        canMove = true;
+        invincibility = true;
+    }
+
+    public void removeInvincibility()
+    {
+        invincibility = false;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("AlienBullet") && !invincibility)
         {
-            if (transform.position.x > MaxLeft.transform.position.x)
-            {
-                transform.position -= new Vector3(speed*Time.deltaTime, 0, 0);
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (!currentBullet.activeSelf)
-            {
-                Destroy(currentBullet);
-                currentBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-            }
+            GetComponent<Animator>().Play("playerHit");
+            canMove = false;
         }
     }
 }
