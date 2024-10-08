@@ -20,7 +20,7 @@ public class Difficulty : MonoBehaviour
 
     void Start()
     {
-        startAlienCount = alienGroupY.GetComponent<AlienGroupY>().initiationList.Sum();
+        //startAlienCount = alienGroupY.GetComponent<AlienGroupY>().initiationList.Sum();
     }
 
     void Update()
@@ -31,31 +31,26 @@ public class Difficulty : MonoBehaviour
         {
             alienCount += alienGroupY.transform.GetChild(i).childCount;
         }
-        Debug.Log(alienCount);  
 
         if (alienCount <= startAlienCount/2 && !firstLOD)
         {
-            Debug.Log("first");
-            firstLOD = true;
-            alienGroupY.GetComponent<AlienGroupY>().speed *= 1.5f;
-        }
-        else if (alienCount <= startAlienCount/4 && !secondLOD)
-        {
-            Debug.Log("deuz");
-            secondLOD = true;
-            alienGroupY.GetComponent<AlienGroupY>().speed *= 1.5f;
-        }
-        else if (alienCount <= startAlienCount/8 && !thirdLOD)
-        {
-            Debug.Log("troiz");
-            thirdLOD = true;
-            alienGroupY.GetComponent<AlienGroupY>().speed *= 2f;
-        }
-        else if (alienCount == 1 && !fourthLOD)
-        {
-            Debug.Log("fourth");
-            fourthLOD = true;
-            alienGroupY.GetComponent<AlienGroupY>().speed *= 3f;
-        }
+        //    firstLOD = true;
+        //    alienGroupY.GetComponent<AlienGroupY>().speed *= 1.5f;
+        //}
+        //else if (alienCount <= startAlienCount/4 && !secondLOD)
+        //{
+        //    secondLOD = true;
+        //    alienGroupY.GetComponent<AlienGroupY>().speed *= 1.5f;
+        //}
+        //else if (alienCount <= startAlienCount/8 && !thirdLOD)
+        //{
+        //    thirdLOD = true;
+        //    alienGroupY.GetComponent<AlienGroupY>().speed *= 2f;
+        //}
+        //else if (alienCount == 1 && !fourthLOD)
+        //{
+        //    fourthLOD = true;
+        //    alienGroupY.GetComponent<AlienGroupY>().speed *= 3f;
+        //}
     }
 }

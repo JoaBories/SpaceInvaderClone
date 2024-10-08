@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7670150870023232356
+--- !u!1 &7005234606409768085
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,43 +8,47 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6996034745972049425}
-  - component: {fileID: 2009145561087922022}
+  - component: {fileID: 202956642786456264}
+  - component: {fileID: 2000623320280691926}
   m_Layer: 0
-  m_Name: AlienGroupX
+  m_Name: AlienGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6996034745972049425
+--- !u!4 &202956642786456264
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7670150870023232356}
+  m_GameObject: {fileID: 7005234606409768085}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 4, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2009145561087922022
+--- !u!114 &2000623320280691926
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7670150870023232356}
+  m_GameObject: {fileID: 7005234606409768085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e18d16840c3ea4147bd1e18c8f1079b4, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a92cba997cd10048b433e69a69f9d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   alienPrefab: {fileID: 277858297017720398, guid: 3868573cca2380e49bcfb06579e84193, type: 3}
-  alienNumber: 2
-  alienDistance: 0.8
-  currentAlien: {fileID: 0}
+  maxRight: {fileID: 0}
+  maxLeft: {fileID: 0}
+  xSpeed: 1
+  ySpeed: 1
+  initiationList: 080000000800000008000000
+  yDistance: 2
+  xDistance: 2
