@@ -60,11 +60,12 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.38f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\script\AlienGroup.cs" />
-    <Compile Include="Assets\script\Difficulty.cs" />
     <Compile Include="Assets\script\Player.cs" />
-    <Compile Include="Assets\script\Bullet.cs" />
+    <Compile Include="Assets\script\Alien\AlienGroup.cs" />
+    <Compile Include="Assets\script\AlienBullet.cs" />
+    <Compile Include="Assets\script\PlayerBullet.cs" />
     <Compile Include="Assets\script\Alien\Alien.cs" />
+    <Compile Include="Assets\script\Alien\AlienCol.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

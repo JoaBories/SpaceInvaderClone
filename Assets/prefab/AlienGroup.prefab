@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alienPrefab: {fileID: 277858297017720398, guid: 3868573cca2380e49bcfb06579e84193, type: 3}
+  colPrefab: {fileID: 4066307185772136034, guid: c0187e5598ffda84bb66a2cb71577aeb, type: 3}
   maxRight: {fileID: 0}
   maxLeft: {fileID: 0}
   xSpeed: 1
