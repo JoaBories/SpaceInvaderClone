@@ -19,29 +19,32 @@ public class AlienGroupY : MonoBehaviour
     public int groupXNumber;
     public float groupXDistance;
     public List<int> initiationList;
-
+    public float alienDistance;
+    
+    float scale;
     float width;
     float downDistance = 0.5f;
-    double firstgroupXPos;
-    double groupXPos;
+    float firstgroupXPos;
+    float groupXPos;
     bool right = true;
     GameObject currentGroupX;
 
 
     void Start()
     {
-        width = (initiationList.Max() - 1) * (0.8f + 0.5f) + 0.8f;
+        scale = transform.localScale.x;
+        width = (initiationList.Max() - 1) * (scale + alienDistance*scale) + scale;
 
         firstgroupXPos = 0;
         groupXPos = firstgroupXPos;
         foreach (int alienNumber in initiationList)
         {
             currentGroupX = Instantiate(groupXPrefab, transform);
-            currentGroupX.transform.localPosition = new Vector3(0, (float)groupXPos, 0);
+            currentGroupX.transform.localPosition = new Vector3(0, groupXPos, 0);
             currentGroupX.GetComponent<AlienGroupX>().alienNumber = alienNumber;
+            currentGroupX.GetComponent<AlienGroupX>().alienDistance = alienDistance;
             groupXPos -= (1 + groupXDistance);
         }
-
     }
 
     void Update()

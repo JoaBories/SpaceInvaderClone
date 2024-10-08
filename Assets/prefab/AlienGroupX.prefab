@@ -46,5 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   alienPrefab: {fileID: 277858297017720398, guid: 3868573cca2380e49bcfb06579e84193, type: 3}
   alienNumber: 2
-  alienDistance: 0.5
-  alienList: []
+  alienDistance: 0.8
+  currentAlien: {fileID: 0}
