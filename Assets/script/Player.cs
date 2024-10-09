@@ -14,14 +14,12 @@ public class player : MonoBehaviour
 
     GameObject currentBullet;
 
-    // Start is called before the first frame update
     void Start()
     {
         currentBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         currentBullet.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (canMove)

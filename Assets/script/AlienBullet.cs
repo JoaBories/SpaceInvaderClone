@@ -27,7 +27,7 @@ public class AlienBullet : MonoBehaviour
         if (collision.gameObject.CompareTag("ShieldBlock"))
         {
             Destroy(gameObject);
-            Destroy(collision.gameObject);
+            collision.gameObject.SetActive(false);
         }
     }
 }

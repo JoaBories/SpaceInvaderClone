@@ -40,13 +40,12 @@ public class AlienGroup : MonoBehaviour
 
     void Start()
     {
-        spawn(initialColNumber, initialLignNumber, xDistance, yDistance);
     }
 
     void Update()
     {
         alienN = alienCount();
-        if ( alienN == 0 ) Destroy(gameObject);
+        if ( alienN == 0 ) gameObject.SetActive(false);
 
         //movement
         if (goingRight && (rightColPos() + (scale/2) >= maxRight.transform.position.x) || (!goingRight && (leftColPos() - (scale / 2) <= maxLeft.transform.position.x)))
@@ -66,11 +65,10 @@ public class AlienGroup : MonoBehaviour
             if(nextInRoundDifficultyLevel != inRoundDifficultyLevelList.Count-1) nextInRoundDifficultyLevel++;
             else inRoundMaxDifficulty = true;
         }
-
         
     }
 
-    void spawn(int colNumber, int lignNumber, float xDistance, float yDistance)
+    public void spawn(int colNumber, int lignNumber, float xDistance, float yDistance)
     {
         yPos = 0;
         scale = transform.localScale.x;
@@ -111,7 +109,7 @@ public class AlienGroup : MonoBehaviour
         }
     }
 
-    int alienCount()
+    public int alienCount()
     {
         int n = 0;
         for (int i = 0; i < transform.childCount; i++)
@@ -121,21 +119,24 @@ public class AlienGroup : MonoBehaviour
         return n;
     }
 
-    float bottomAlienPos()
+    public float bottomAlienPos()
     {
         if (transform.childCount != 0)
         {
-            float minpos = transform.GetChild(0).transform.GetChild(0).transform.localPosition.y;
-            for (int colIndex = 0; colIndex < transform.childCount; colIndex++)
+            if (transform.GetChild(0).transform.childCount != 1)
             {
-                for (int alienIndex = 1; alienIndex < transform.GetChild(colIndex).childCount; alienIndex++)
+                float minpos = transform.GetChild(0).transform.GetChild(0).transform.position.y;
+                for (int colIndex = 1; colIndex < transform.childCount; colIndex++)
                 {
-                    if (transform.GetChild(colIndex).transform.GetChild(alienIndex).transform.localPosition.y < minpos) minpos = transform.GetChild(colIndex).transform.GetChild(alienIndex).transform.localPosition.y;
+                    for (int alienIndex = 1; alienIndex < transform.GetChild(colIndex).childCount; alienIndex++)
+                    {
+                        if (transform.GetChild(colIndex).transform.GetChild(alienIndex).transform.position.y < minpos) minpos = transform.GetChild(colIndex).transform.GetChild(alienIndex).transform.position.y;
+                    }
                 }
+                return minpos;
             }
-            return minpos;
         }
-        return 0;
+        return 3;
     }
 
     float leftColPos()

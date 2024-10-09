@@ -19,11 +19,14 @@ public class PlayerBullet : MonoBehaviour
         {
             Destroy(collision.gameObject);
             gameObject.SetActive(false);
+            Score.Instance.score += 10;
         }
         if (collision.gameObject.CompareTag("ShieldBlock"))
         {
-            Destroy(collision.gameObject);
+            collision.gameObject.SetActive(false);
             gameObject.SetActive(false);
         }
     }
+
+
 }
