@@ -64,7 +64,7 @@
     <Compile Include="Assets\script\Alien\AlienGroup.cs" />
     <Compile Include="Assets\script\AlienBullet.cs" />
     <Compile Include="Assets\script\PlayerBullet.cs" />
-    <Compile Include="Assets\script\Alien\Alien.cs" />
+    <Compile Include="Assets\script\GameController.cs" />
     <Compile Include="Assets\script\Alien\AlienCol.cs" />
   </ItemGroup>
   <ItemGroup>

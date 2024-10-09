@@ -1,32 +1,36 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AlienGroup : MonoBehaviour
 {
     //movement
+    [Header("movement")]
     public GameObject maxRight;
     public GameObject maxLeft;
     public float xSpeed;
     public float ySpeed;
     bool goingRight = true;
 
-    
-    
+    //difficulty
+    int alienN;
+    int initialAlienCount;
+    List<Vector2> inRoundDifficultyLevelList = new List<Vector2> {new Vector2(2, 1.5f), new Vector2(4, 3f), new Vector2(1, 6f) };
+    int nextInRoundDifficultyLevel;
+    bool inRoundMaxDifficulty;
+
+
     //spawn
+    [Header("spawn")]
     public GameObject alienPrefab;
     public GameObject colPrefab;
     public int initialColNumber;
     public int initialLignNumber;
-
     public float yDistance;
     public float xDistance;
     
     float xPos;
     float yPos;
-
     float scale;
-
     float width;
     float height;
 
@@ -41,11 +45,10 @@ public class AlienGroup : MonoBehaviour
 
     void Update()
     {
-        if (transform.childCount == 0)
-        {
-            Destroy(gameObject);
-        }
+        alienN = alienCount();
+        if ( alienN == 0 ) Destroy(gameObject);
 
+        //movement
         if (goingRight && (rightColPos() + (scale/2) >= maxRight.transform.position.x) || (!goingRight && (leftColPos() - (scale / 2) <= maxLeft.transform.position.x)))
         {
             goingRight = !goingRight;
@@ -57,12 +60,31 @@ public class AlienGroup : MonoBehaviour
             else transform.position -= new Vector3(xSpeed * Time.deltaTime, 0, 0);
         }
 
+        if(alienN <= inRoundDifficultyLevelList[nextInRoundDifficultyLevel][0] && !inRoundMaxDifficulty)
+        {
+            xSpeed = inRoundDifficultyLevelList[nextInRoundDifficultyLevel][1];
+            if(nextInRoundDifficultyLevel != inRoundDifficultyLevelList.Count-1) nextInRoundDifficultyLevel++;
+            else inRoundMaxDifficulty = true;
+        }
+
+        
     }
 
     void spawn(int colNumber, int lignNumber, float xDistance, float yDistance)
     {
         yPos = 0;
         scale = transform.localScale.x;
+        initialAlienCount = colNumber * lignNumber;
+        nextInRoundDifficultyLevel = 0;
+        inRoundMaxDifficulty = false;
+
+        for(int i=0 ; i < inRoundDifficultyLevelList.Count; i++)
+        {
+            if (inRoundDifficultyLevelList[i].x != 1)
+            {
+                inRoundDifficultyLevelList[i] = new Vector2(initialAlienCount / inRoundDifficultyLevelList[i].x, inRoundDifficultyLevelList[i].y);
+            }
+        }
 
         if (colNumber == 1) xPos = 0;
         else if (colNumber % 2 == 0) xPos = -((xDistance / 2) + (scale / 2) + ((scale + xDistance) * ((colNumber / 2) - 1)));
@@ -72,7 +94,7 @@ public class AlienGroup : MonoBehaviour
         {
             currentCol = Instantiate(colPrefab, transform);
             currentCol.transform.localPosition = new Vector3(xPos, 0, 0);
-            currentCol.GetComponent<BoxCollider2D>().size = new Vector2((xDistance+scale)*3, 30);
+            currentCol.GetComponent<BoxCollider2D>().size = new Vector2((xDistance+scale)*2, 30);
             colList.Add(currentCol);
             xPos += (scale + xDistance);
         }
@@ -87,6 +109,16 @@ public class AlienGroup : MonoBehaviour
 
             yPos -= (scale + yDistance);
         }
+    }
+
+    int alienCount()
+    {
+        int n = 0;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            n += transform.GetChild(i).childCount;
+        }
+        return n;
     }
 
     float bottomAlienPos()

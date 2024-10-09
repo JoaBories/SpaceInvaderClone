@@ -9,8 +9,8 @@ public class player : MonoBehaviour
     public GameObject bulletPrefab;
 
     public float speed;
-    bool canMove = true;
-    bool invincibility = false;
+    public bool canMove = true;
+    public bool invincibility = false;
 
     GameObject currentBullet;
 
@@ -63,12 +63,5 @@ public class player : MonoBehaviour
         invincibility = false;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("AlienBullet") && !invincibility)
-        {
-            GetComponent<Animator>().Play("playerHit");
-            canMove = false;
-        }
-    }
+    
 }
