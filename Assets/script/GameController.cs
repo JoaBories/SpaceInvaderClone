@@ -9,7 +9,9 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
-    
+    Controls controls;
+    bool startPressed;
+
     [Header("Effect System")]
     public GameObject gameCamera;
     public GameObject globalVolume;
@@ -42,14 +44,13 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        if (globalVolume.GetComponent<Volume>().profile.TryGet(out lensDistortion))
-        {
-            Debug.Log("chopé");
-        }
+        globalVolume.GetComponent<Volume>().profile.TryGet(out lensDistortion);
         Instance = this;
         levelNumber = 1;
         score = 0;
         switchState("startMenu");
+        controls = new Controls();
+        controls.Gameplay.Enable();
     }
 
     void Update()
@@ -71,7 +72,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case "betweenLevel":
-                if (Input.GetKeyDown(KeyCode.Return))
+                if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
                     startLevel(levelNumber);
@@ -79,7 +80,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case "win":
-                if (Input.GetKeyDown(KeyCode.Return))
+                if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
                     restart();
@@ -87,7 +88,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case "loose":
-                if (Input.GetKeyDown(KeyCode.Return))
+                if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
                     restart();
@@ -95,7 +96,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case "startMenu":
-                if (Input.GetKeyDown(KeyCode.Return))
+                if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
                     startLevel(levelNumber);
@@ -103,6 +104,7 @@ public class GameController : MonoBehaviour
                 break;
         }
     }
+
     void switchState(string nexState)
     {
         state = nexState;

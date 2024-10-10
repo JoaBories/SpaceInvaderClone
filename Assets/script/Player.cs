@@ -1,9 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class player : MonoBehaviour
 {
+    Controls controls;
+    bool movingRight;
+    bool movingLeft;
+
     public GameObject MaxLeft;
     public GameObject MaxRight;
     public GameObject bulletPrefab;
@@ -18,27 +21,29 @@ public class player : MonoBehaviour
     {
         currentBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         currentBullet.SetActive(false);
+        controls = new Controls();
+        controls.Gameplay.Enable();
     }
 
     void Update()
     {
         if (canMove)
         {
-            if (Input.GetKey(KeyCode.RightArrow))
+            if (controls.Gameplay.Right.inProgress)
             {
                 if (transform.position.x < MaxRight.transform.position.x)
                 {
                     transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
                 }
             }
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if (controls.Gameplay.Left.inProgress)
             {
                 if (transform.position.x > MaxLeft.transform.position.x)
                 {
                     transform.position -= new Vector3(speed * Time.deltaTime, 0, 0);
                 }
             }
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (controls.Gameplay.Shoot.triggered)
             {
                 if (!currentBullet.activeSelf)
                 {
