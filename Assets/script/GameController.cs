@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -10,6 +12,8 @@ public class GameController : MonoBehaviour
     
     [Header("Effect System")]
     public GameObject gameCamera;
+    public GameObject globalVolume;
+    private LensDistortion lensDistortion;
 
     [Header("Game Objects")]
     public GameObject player;
@@ -38,6 +42,10 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        if (globalVolume.GetComponent<Volume>().profile.TryGet(out lensDistortion))
+        {
+            Debug.Log("chopé");
+        }
         Instance = this;
         levelNumber = 1;
         score = 0;
@@ -94,6 +102,50 @@ public class GameController : MonoBehaviour
                 }
                 break;
         }
+    }
+    void switchState(string nexState)
+    {
+        state = nexState;
+        switch (nexState)
+        {
+            case "running":
+                getLensDistorsionTo(0.1f, 0.1f);
+                nextLevelTextDisplay.SetActive(false);
+                startTextDisplay.SetActive(false);
+                restartTextDisplay.SetActive(false);
+                break;
+            case "betweenLevel":
+                getLensDistorsionTo(0.3f, 0.1f);
+                nextLevelTextDisplay.SetActive(true);
+                break;
+            case "startMenu":
+                getLensDistorsionTo(0.3f, 0.1f);
+                startTextDisplay.SetActive(true);
+                break;
+            case "win":
+                getLensDistorsionTo(0.3f, 0.1f);
+                restartTextDisplay.SetActive(true);
+                break;
+            case "loose":
+                getLensDistorsionTo(0.3f, 0.1f);
+                restartTextDisplay.SetActive(true);
+                break;
+        }
+    }
+
+    void getLensDistorsionTo(float goal, float time)
+    {
+        StartCoroutine(getLensDistorsionToCoroutine(goal, Math.Abs(goal - lensDistortion.intensity.value) / 100, time / 100));
+    }
+
+    IEnumerator getLensDistorsionToCoroutine(float goal, float step, float timeInterval)
+    {
+        while (Math.Abs(lensDistortion.intensity.value - goal) >= step*10)
+        {
+            if(goal > lensDistortion.intensity.value) lensDistortion.intensity.value += step;
+            else lensDistortion.intensity.value -= step;
+            yield return new WaitForSeconds(timeInterval);
+        }
 
     }
 
@@ -108,34 +160,10 @@ public class GameController : MonoBehaviour
         else scoreText = "bro how did you do that ? ";
         scoreTextDisplay.GetComponent<Text>().text = scoreText + score.ToString();
     }
-    void switchState(string nexState)
-    {
-        state = nexState;
-        switch (nexState)
-        {
-            case "running":
-                nextLevelTextDisplay.SetActive(false);
-                startTextDisplay.SetActive(false);
-                restartTextDisplay.SetActive(false);
-                break;
-            case "betweenLevel":
-                nextLevelTextDisplay.SetActive(true);
-                break;
-            case "startMenu":
-                startTextDisplay.SetActive(true);
-                break;
-            case "win":
-                restartTextDisplay.SetActive(true);
-                break;
-            case "loose":
-                restartTextDisplay.SetActive(true);
-                break;
-        }
-    }
 
     void restart()
     {
-        Score.Instance.score = 0;
+        GameController.Instance.score = 0;
         levelNumber = 1;
         startLevel(levelNumber);
     }

@@ -6,23 +6,19 @@ public class AlienGroup : MonoBehaviour
     public Vector3 initialPosition;
     public Vector2 baseSpeed;
 
-    //movement
     [Header("movement")]
     public GameObject maxRight;
     public GameObject maxLeft;
     Vector2 globalSpeed;
     bool goingRight = true;
 
-    //difficulty
     [Header("difficulty")]
-    public List<Vector2> inRoundDifficultyLevelList = new List<Vector2> {new Vector2(2, 1.5f), new Vector2(4, 3f), new Vector2(1, 6f) };
+    public List<Vector2> inRoundDifficultyLevelList = new List<Vector2> {new Vector2(0, 1.5f), new Vector2(0, 3f), new Vector2(1, 6f) };
     int alienN;
     int initialAlienCount;
     int nextInRoundDifficultyLevel;
     bool inRoundMaxDifficulty;
 
-
-    //spawn
     [Header("spawn")]
     public GameObject alienPrefab;
     public GameObject colPrefab;
@@ -88,13 +84,8 @@ public class AlienGroup : MonoBehaviour
         }
 
         //setup in round difficulty trigger depend to the alien number
-        for(int i=0 ; i < inRoundDifficultyLevelList.Count; i++)
-        {
-            if (inRoundDifficultyLevelList[i].x != 1)
-            {
-                inRoundDifficultyLevelList[i] = new Vector2(initialAlienCount / inRoundDifficultyLevelList[i].x, inRoundDifficultyLevelList[i].y);
-            }
-        }
+        inRoundDifficultyLevelList[0] = new Vector2(initialAlienCount / 2, inRoundDifficultyLevelList[0].y);
+        inRoundDifficultyLevelList[1] = new Vector2(initialAlienCount / 4, inRoundDifficultyLevelList[1].y);
 
         //spawn column
         if (alienGroupSize.x == 1) xPos = 0;

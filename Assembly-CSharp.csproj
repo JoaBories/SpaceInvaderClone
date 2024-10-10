@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="Assets\script\LevelSpecs.cs" />
     <Compile Include="Assets\script\Player.cs" />
-    <Compile Include="Assets\script\Score.cs" />
     <Compile Include="Assets\script\Alien\AlienGroup.cs" />
     <Compile Include="Assets\script\AlienBullet.cs" />
     <Compile Include="Assets\script\PlayerBullet.cs" />
