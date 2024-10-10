@@ -44,12 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a92cba997cd10048b433e69a69f9d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alienPrefab: {fileID: 277858297017720398, guid: 3868573cca2380e49bcfb06579e84193, type: 3}
-  colPrefab: {fileID: 4066307185772136034, guid: c0187e5598ffda84bb66a2cb71577aeb, type: 3}
+  initialPosition: {x: 0, y: 0, z: 0}
+  baseSpeed: {x: 0.5, y: 0.5}
   maxRight: {fileID: 0}
   maxLeft: {fileID: 0}
-  xSpeed: 1
-  ySpeed: 1
-  initiationList: 080000000800000008000000
-  yDistance: 2
-  xDistance: 2
+  inRoundDifficultyLevelList:
+  - {x: 2, y: 1.5}
+  - {x: 4, y: 3}
+  - {x: 1, y: 6}
+  alienPrefab: {fileID: 277858297017720398, guid: 3868573cca2380e49bcfb06579e84193, type: 3}
+  colPrefab: {fileID: 4066307185772136034, guid: c0187e5598ffda84bb66a2cb71577aeb, type: 3}
+  distance: {x: 2, y: 2}
