@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public static GameController Instance;
+    
     [Header("Effect System")]
     public GameObject gameCamera;
 
@@ -19,72 +21,129 @@ public class GameController : MonoBehaviour
 
     [Header("Level System")]
     public GameObject levelDisplay;
-    public GameObject nextLevelTextDisplay;
     public List<LevelSpecs> levelSpecsList = new List<LevelSpecs>();
-    int maxLevel = 99;
     int levelNumber;
 
-
-    [Header("Misc")]
+    [Header("Game State System")]
+    public GameObject nextLevelTextDisplay;
     public GameObject startTextDisplay;
-    public bool running;
-    public bool isBetweenLevel;
-    public bool isInStartMenu;
+    public GameObject restartTextDisplay;
+    public GameObject earthLevel;
+    public string state;
+
+    [Header("Score System")]
+    public GameObject scoreTextDisplay;
+    public int score;
+    string scoreText;
 
     void Start()
     {
+        Instance = this;
         levelNumber = 1;
-        running = false;
-        isBetweenLevel = false;
-        isInStartMenu = true;
-        startTextDisplay.SetActive(true);
-        nextLevelTextDisplay.SetActive(false);
+        score = 0;
+        switchState("startMenu");
     }
 
     void Update()
     {
-
-        if (running)
-        {
-            if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= shieldTop.transform.position.y) desactivateShields();
-            if (!alienGroup.activeSelf)
-            {
-                levelNumber++;
-                running = false;
-                isBetweenLevel = true;
-            }
-        }
-        else if (isBetweenLevel)
-        {
-            nextLevelTextDisplay.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                startLevel(levelNumber);
-                isBetweenLevel=false;
-            }
-        }
-        else if (isInStartMenu)
-        {
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                startLevel(levelNumber);
-                isInStartMenu = false;
-            }
-            
-            if (Input.GetKeyDown(KeyCode.UpArrow)) if(levelNumber < maxLevel) levelNumber++;
-            if (Input.GetKeyDown(KeyCode.DownArrow)) if(levelNumber > 1) levelNumber--;
-            
-        }
-
         levelDisplay.GetComponent<Text>().text = levelNumber.ToString();
+        scoreDisplay();
+
+        switch (state)
+        {
+            case "running":
+                if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= shieldTop.transform.position.y) desactivateShields();
+                if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= earthLevel.transform.position.y) switchState("loose");
+                if (!alienGroup.activeSelf)
+                {
+                    levelNumber++;
+                    if (levelNumber > levelSpecsList.Count) switchState("win");
+                    else switchState("betweenLevel");
+                }
+                break;
+
+            case "betweenLevel":
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    switchState("running");
+                    startLevel(levelNumber);
+                }
+                break;
+
+            case "win":
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    switchState("running");
+                    restart();
+                }
+                break;
+
+            case "loose":
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    switchState("running");
+                    restart();
+                }
+                break;
+
+            case "startMenu":
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    switchState("running");
+                    startLevel(levelNumber);
+                }
+                break;
+        }
+
+    }
+
+    void scoreDisplay()
+    {
+        if (score < 10) scoreText = "00000";
+        else if (score < 100) scoreText = "0000";
+        else if (score < 1000) scoreText = "000";
+        else if (score < 10000) scoreText = "00";
+        else if (score < 100000) scoreText = "0";
+        else if (score < 1000000) scoreText = "";
+        else scoreText = "bro how did you do that ? ";
+        scoreTextDisplay.GetComponent<Text>().text = scoreText + score.ToString();
+    }
+    void switchState(string nexState)
+    {
+        state = nexState;
+        switch (nexState)
+        {
+            case "running":
+                nextLevelTextDisplay.SetActive(false);
+                startTextDisplay.SetActive(false);
+                restartTextDisplay.SetActive(false);
+                break;
+            case "betweenLevel":
+                nextLevelTextDisplay.SetActive(true);
+                break;
+            case "startMenu":
+                startTextDisplay.SetActive(true);
+                break;
+            case "win":
+                restartTextDisplay.SetActive(true);
+                break;
+            case "loose":
+                restartTextDisplay.SetActive(true);
+                break;
+        }
+    }
+
+    void restart()
+    {
+        Score.Instance.score = 0;
+        levelNumber = 1;
+        startLevel(levelNumber);
     }
 
     void startLevel(int levelNumber)
     {
-        nextLevelTextDisplay.SetActive(false);
-        startTextDisplay.SetActive(false) ;
-        running = true;
         activateShields();
+        player.GetComponent<Animator>().Play("playerInvincibility");
         spawnAlien(levelSpecsList[levelNumber - 1].size, levelSpecsList[levelNumber - 1].speed ,levelSpecsList[levelNumber - 1].shootCooldown);
     }
 
