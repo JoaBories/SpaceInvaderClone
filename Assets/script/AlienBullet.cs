@@ -17,11 +17,7 @@ public class AlienBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (!collision.gameObject.GetComponent<player>().invincibility)
-            {
-                collision.gameObject.GetComponent<Animator>().Play("playerHit");
-                collision.gameObject.GetComponent<player>().canMove = false;
-            }
+            GameController.Instance.hitPlayer();
             Destroy(gameObject);
         }
         if (collision.gameObject.CompareTag("ShieldBlock"))

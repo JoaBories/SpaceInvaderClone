@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
@@ -27,8 +29,14 @@ public class GameController : MonoBehaviour
 
     [Header("Level System")]
     public GameObject levelDisplay;
+    public GameObject startTimerText;
     public List<LevelSpecs> levelSpecsList = new List<LevelSpecs>();
+    bool endTimer;
+    float startTimerTime;
     int levelNumber;
+    public bool canShoot;
+    public bool canMove;
+
 
     [Header("Game State System")]
     public GameObject nextLevelTextDisplay;
@@ -38,9 +46,16 @@ public class GameController : MonoBehaviour
     public string state;
 
     [Header("Score System")]
+    public GameObject scoreMultiplicatorDisplay;
+    public GameObject intMultiplicatorDisplay;
+    public GameObject floatMultiplicatorDisplay;
     public GameObject scoreTextDisplay;
     public int score;
+    public float scoreMultiplicator;
+    float maxScoreMultiplicator = 10;
     string scoreText;
+
+    private Coroutine vibrationHappening;
 
     void Start()
     {
@@ -51,16 +66,54 @@ public class GameController : MonoBehaviour
         switchState("startMenu");
         controls = new Controls();
         controls.Gameplay.Enable();
+        canMove = false;
+        canShoot = false;
+        scoreMultiplicator = 1f;
     }
 
     void Update()
     {
         levelDisplay.GetComponent<Text>().text = levelNumber.ToString();
+        intMultiplicatorDisplay.GetComponent<Text>().text = scoreMultiplicator.ToString();
         scoreDisplay();
+
+        if (scoreMultiplicator == 1f)
+        {
+            scoreMultiplicatorDisplay.SetActive(false);
+        }
 
         switch (state)
         {
             case "running":
+                if (!endTimer)
+                {
+                    if (startTimerTime + 2f <= Time.time)
+                    {
+                        startTimerText.SetActive(false);
+                        endTimer = true;
+                    }
+                    else if (startTimerTime + 1.5f <= Time.time && startTimerText.GetComponent<Text>().text == "1")
+                    {
+                        canMove = true;
+                        canShoot = true;
+                        startTimerText.GetComponent<Animator>().Play("textAppear");
+                        startTimerText.GetComponent<Text>().text = "GO!";
+                        if(vibrationHappening == null) StartCoroutine(vibration(0.2f, 1f, 1f));
+                    }
+                    else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<Text>().text == "2")
+                    {
+                        startTimerText.GetComponent<Animator>().Play("textAppear");
+                        startTimerText.GetComponent<Text>().text = "1";
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0, 0.5f));
+                    }
+                    else if (startTimerTime + 0.5f <= Time.time && startTimerText.GetComponent<Text>().text == "3")
+                    {
+                        startTimerText.GetComponent<Animator>().Play("textAppear");
+                        startTimerText.GetComponent<Text>().text = "2";
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0));
+                    }
+                }
+
                 if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= shieldTop.transform.position.y) desactivateShields();
                 if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= earthLevel.transform.position.y) switchState("loose");
                 if (!alienGroup.activeSelf)
@@ -80,6 +133,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case "win":
+                alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
@@ -88,6 +142,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case "loose":
+                alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
@@ -111,25 +166,33 @@ public class GameController : MonoBehaviour
         switch (nexState)
         {
             case "running":
-                getLensDistorsionTo(0.1f, 0.1f);
+                getLensDistorsionTo(0.2f, 1f);
                 nextLevelTextDisplay.SetActive(false);
                 startTextDisplay.SetActive(false);
                 restartTextDisplay.SetActive(false);
+                startTimerText.SetActive(true);
+                startTimerTime = Time.time;
+                endTimer = false;
+                startTimerText.GetComponent<Animator>().Play("textAppear");
+                startTimerText.GetComponent<Text>().text = "3";
+                if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0, 0.5f));
                 break;
             case "betweenLevel":
-                getLensDistorsionTo(0.3f, 0.1f);
+                canMove = false;
+                canShoot = false;
+                getLensDistorsionTo(0.4f, 0.1f);
                 nextLevelTextDisplay.SetActive(true);
                 break;
             case "startMenu":
-                getLensDistorsionTo(0.3f, 0.1f);
+                getLensDistorsionTo(0.4f, 0.1f);
                 startTextDisplay.SetActive(true);
                 break;
             case "win":
-                getLensDistorsionTo(0.3f, 0.1f);
+                getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
                 break;
             case "loose":
-                getLensDistorsionTo(0.3f, 0.1f);
+                getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
                 break;
         }
@@ -149,6 +212,14 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(timeInterval);
         }
 
+    }
+
+    public IEnumerator vibration(float time, float highFrequency, float lowFrequency)
+    {
+        Gamepad.current.SetMotorSpeeds(highFrequency, lowFrequency);
+        yield return new WaitForSeconds(time);
+        Gamepad.current.SetMotorSpeeds(0, 0);
+        vibrationHappening = null;
     }
 
     void scoreDisplay()
@@ -173,7 +244,7 @@ public class GameController : MonoBehaviour
     void startLevel(int levelNumber)
     {
         activateShields();
-        player.GetComponent<Animator>().Play("playerInvincibility");
+        player.GetComponent<Animator>().Play("playerSpawn");
         spawnAlien(levelSpecsList[levelNumber - 1].size, levelSpecsList[levelNumber - 1].speed ,levelSpecsList[levelNumber - 1].shootCooldown);
     }
 
@@ -183,12 +254,40 @@ public class GameController : MonoBehaviour
         alienGroup.GetComponent<AlienGroup>().spawn(size, speed, alienShootCooldown);
     }
 
+    public void killedAlien()
+    {
+        scoreMultiplicator += 0.1f;
+        if (scoreMultiplicator > maxScoreMultiplicator) scoreMultiplicator = maxScoreMultiplicator;
+        score += 10;
+        if(vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
+    }
+
+    public void hitPlayer()
+    {
+        scoreMultiplicator = 1f;
+        if (!player.GetComponent<player>().invincibility)
+        {
+            player.gameObject.GetComponent<Animator>().Play("playerHit");
+            StopAllCoroutines();
+            vibrationHappening = StartCoroutine(vibration(4f, 0.2f, 0.2f));
+        }
+    }
+
+    void scoreMultiplicatorIcnrement(float increment)
+    {
+        if (((scoreMultiplicator + increment)*100)%10 == 0)
+        {
+
+        }
+    }
+
     void desactivateShields()
     {
         foreach (GameObject shield in shields)
         {
             shield.SetActive(false);
         }
+        if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
     } 
 
     void activateShields()

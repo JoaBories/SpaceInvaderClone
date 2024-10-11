@@ -45,24 +45,27 @@ public class AlienGroup : MonoBehaviour
         if ( alienN == 0 ) gameObject.SetActive(false);
 
         //movement
-        if (goingRight && (rightColPos() + (scale/2) >= maxRight.transform.position.x) || (!goingRight && (leftColPos() - (scale / 2) <= maxLeft.transform.position.x)))
-        {
-            goingRight = !goingRight;
-            transform.position -= new Vector3(0, globalSpeed.y, 0);
-        }
-        else
-        {
-            if (goingRight) transform.position += new Vector3(globalSpeed.x * Time.deltaTime, 0, 0);
-            else transform.position -= new Vector3(globalSpeed.x * Time.deltaTime, 0, 0);
-        }
 
-        if(alienN <= inRoundDifficultyLevelList[nextInRoundDifficultyLevel][0] && !inRoundMaxDifficulty)
+        if (GameController.Instance.canMove)
         {
-            globalSpeed.x = inRoundDifficultyLevelList[nextInRoundDifficultyLevel][1];
-            if(nextInRoundDifficultyLevel != inRoundDifficultyLevelList.Count-1) nextInRoundDifficultyLevel++;
-            else inRoundMaxDifficulty = true;
+            if (goingRight && (rightColPos() + (scale / 2) >= maxRight.transform.position.x) || (!goingRight && (leftColPos() - (scale / 2) <= maxLeft.transform.position.x)))
+            {
+                goingRight = !goingRight;
+                transform.position -= new Vector3(0, globalSpeed.y, 0);
+            }
+            else
+            {
+                if (goingRight) transform.position += new Vector3(globalSpeed.x * Time.deltaTime, 0, 0);
+                else transform.position -= new Vector3(globalSpeed.x * Time.deltaTime, 0, 0);
+            }
+
+            if (alienN <= inRoundDifficultyLevelList[nextInRoundDifficultyLevel][0] && !inRoundMaxDifficulty)
+            {
+                globalSpeed.x = inRoundDifficultyLevelList[nextInRoundDifficultyLevel][1];
+                if (nextInRoundDifficultyLevel != inRoundDifficultyLevelList.Count - 1) nextInRoundDifficultyLevel++;
+                else inRoundMaxDifficulty = true;
+            }
         }
-        
     }
 
     public void spawn(Vector2Int alienGroupSize,Vector2 speed, float alienShootCooldown)
@@ -77,6 +80,7 @@ public class AlienGroup : MonoBehaviour
         initialAlienCount = alienGroupSize.x * alienGroupSize.y;
         nextInRoundDifficultyLevel = 0;
         inRoundMaxDifficulty = false;
+
         colList.Clear();
         for(int i=0; i< transform.childCount; i++)
         {

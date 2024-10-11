@@ -17,9 +17,9 @@ public class PlayerBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Alien"))
         {
+            GameController.Instance.killedAlien();
             Destroy(collision.gameObject);
             gameObject.SetActive(false);
-            GameController.Instance.score += 10;
         }
         if (collision.gameObject.CompareTag("ShieldBlock"))
         {

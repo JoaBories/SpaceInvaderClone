@@ -12,7 +12,7 @@ public class player : MonoBehaviour
     public GameObject bulletPrefab;
 
     public float speed;
-    public bool canMove = true;
+    public bool canShoot = true;
     public bool invincibility = false;
 
     GameObject currentBullet;
@@ -27,22 +27,23 @@ public class player : MonoBehaviour
 
     void Update()
     {
-        if (canMove)
+        if (controls.Gameplay.Right.inProgress)
         {
-            if (controls.Gameplay.Right.inProgress)
+            if (transform.position.x < MaxRight.transform.position.x)
             {
-                if (transform.position.x < MaxRight.transform.position.x)
-                {
-                    transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
-                }
+                transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
             }
-            if (controls.Gameplay.Left.inProgress)
+        }
+        if (controls.Gameplay.Left.inProgress)
+        {
+            if (transform.position.x > MaxLeft.transform.position.x)
             {
-                if (transform.position.x > MaxLeft.transform.position.x)
-                {
-                    transform.position -= new Vector3(speed * Time.deltaTime, 0, 0);
-                }
+                transform.position -= new Vector3(speed * Time.deltaTime, 0, 0);
             }
+        }
+
+        if (canShoot)
+        {
             if (controls.Gameplay.Shoot.triggered)
             {
                 if (!currentBullet.activeSelf)
@@ -54,17 +55,16 @@ public class player : MonoBehaviour
         }
     }
 
-    public void respawn()
-    {
-        transform.position = new Vector3(0, -4, 0); 
-        canMove = true;
-        invincibility = true;
-    }
-
     public void removeInvincibility()
     {
         invincibility = false;
+        canShoot = true;
     }
 
-    
+    public void setInvincibility()
+    {
+        invincibility = true;
+        canShoot = false;
+    }
+
 }

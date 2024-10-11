@@ -24,7 +24,7 @@ public class AlienCol : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (shooting && Time.time > nextShoot)
+        if (shooting && Time.time > nextShoot && GameController.Instance.canShoot)
         {       
             int randInt = Random.Range(0,shootOdd);
             if (randInt == 0)
