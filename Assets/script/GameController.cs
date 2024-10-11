@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -74,13 +75,21 @@ public class GameController : MonoBehaviour
     void Update()
     {
         levelDisplay.GetComponent<Text>().text = levelNumber.ToString();
-        intMultiplicatorDisplay.GetComponent<Text>().text = scoreMultiplicator.ToString();
+
+        if (scoreMultiplicator.ToString().Length == 3)
+        {
+            intMultiplicatorDisplay.GetComponent<Text>().text = scoreMultiplicator.ToString()[0].ToString();
+            floatMultiplicatorDisplay.GetComponent<Text>().text = "." + scoreMultiplicator.ToString()[2].ToString();
+        } 
+        else
+        {
+            intMultiplicatorDisplay.GetComponent<Text>().text = scoreMultiplicator.ToString()[0].ToString();
+            floatMultiplicatorDisplay.GetComponent<Text>().text = "";
+        }
         scoreDisplay();
 
-        if (scoreMultiplicator == 1f)
-        {
-            scoreMultiplicatorDisplay.SetActive(false);
-        }
+        if (scoreMultiplicator <= 1f) scoreMultiplicatorDisplay.SetActive(false);
+        else scoreMultiplicatorDisplay.SetActive(true);
 
         switch (state)
         {
@@ -256,7 +265,7 @@ public class GameController : MonoBehaviour
 
     public void killedAlien()
     {
-        scoreMultiplicator += 0.1f;
+        scoreMultiplicatorIncrement(0.1f);
         if (scoreMultiplicator > maxScoreMultiplicator) scoreMultiplicator = maxScoreMultiplicator;
         score += 10;
         if(vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
@@ -264,30 +273,33 @@ public class GameController : MonoBehaviour
 
     public void hitPlayer()
     {
-        scoreMultiplicator = 1f;
+        scoreMultiplicator = 1;
         if (!player.GetComponent<player>().invincibility)
         {
             player.gameObject.GetComponent<Animator>().Play("playerHit");
             StopAllCoroutines();
-            vibrationHappening = StartCoroutine(vibration(4f, 0.2f, 0.2f));
+            vibrationHappening = StartCoroutine(vibration(2f, 0.2f, 0.2f));
         }
     }
 
-    void scoreMultiplicatorIcnrement(float increment)
+    void scoreMultiplicatorIncrement(float increment)
     {
-        if (((scoreMultiplicator + increment)*100)%10 == 0)
-        {
+        scoreMultiplicator = (float) Math.Round(increment + scoreMultiplicator, 2);
+        Debug.Log(scoreMultiplicator * 10 + " et entier : " + (scoreMultiplicator * 10) % 10);
 
+        if ((scoreMultiplicator*10)%10 == 0)
+        {
+            scoreMultiplicatorDisplay.GetComponent<Animator>().Play("multiplicatorNewInt");
         }
     }
 
     void desactivateShields()
     {
+        if (shields[0].activeSelf) if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
         foreach (GameObject shield in shields)
         {
             shield.SetActive(false);
         }
-        if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
     } 
 
     void activateShields()
