@@ -48,12 +48,17 @@ public class GameController : MonoBehaviour
 
     [Header("Score System")]
     public GameObject scoreMultiplicatorDisplay;
-    public GameObject intMultiplicatorDisplay;
-    public GameObject floatMultiplicatorDisplay;
+    public GameObject inStreakScoreDisplay;
     public GameObject scoreTextDisplay;
-    public int score;
-    public float scoreMultiplicator;
-    float maxScoreMultiplicator = 10;
+    public GameObject multiplicatorTimeDisplay;
+    public float multiplicatorTime;
+    bool streakBool = false;
+    bool freazeMultiplicatorTimer = false;
+    int inStreakScore;
+    int score;
+    float endOfMultiplicatorTime;
+    float scoreMultiplicator;
+    float maxScoreMultiplicator = 5;
     string scoreText;
 
     private Coroutine vibrationHappening;
@@ -76,17 +81,22 @@ public class GameController : MonoBehaviour
     {
         levelDisplay.GetComponent<Text>().text = levelNumber.ToString();
 
-        if (scoreMultiplicator.ToString().Length == 3)
-        {
-            intMultiplicatorDisplay.GetComponent<Text>().text = scoreMultiplicator.ToString()[0].ToString();
-            floatMultiplicatorDisplay.GetComponent<Text>().text = "." + scoreMultiplicator.ToString()[2].ToString();
-        } 
-        else
-        {
-            intMultiplicatorDisplay.GetComponent<Text>().text = scoreMultiplicator.ToString()[0].ToString();
-            floatMultiplicatorDisplay.GetComponent<Text>().text = "";
-        }
+        if (scoreMultiplicator.ToString().Length == 3) scoreMultiplicatorDisplay.GetComponent<Text>().text = "X" + scoreMultiplicator.ToString()[0].ToString() + "." + scoreMultiplicator.ToString()[2].ToString();
+        else scoreMultiplicatorDisplay.GetComponent<Text>().text = "X" + scoreMultiplicator.ToString()[0].ToString();
+        
         scoreDisplay();
+        inStreakScoreDisplayF();
+
+        if (freazeMultiplicatorTimer) endOfMultiplicatorTime += Time.deltaTime;
+
+        if (streakBool)
+        {
+            multiplicatorTimeDisplay.SetActive(true);
+            multiplicatorTimeDisplay.GetComponent<Text>().text = (endOfMultiplicatorTime - Time.time).ToString();
+        }
+        else multiplicatorTimeDisplay.SetActive(false);
+
+        if (streakBool && endOfMultiplicatorTime - Time.time <= 0) endStreak();
 
         if (scoreMultiplicator <= 1f) scoreMultiplicatorDisplay.SetActive(false);
         else scoreMultiplicatorDisplay.SetActive(true);
@@ -105,6 +115,7 @@ public class GameController : MonoBehaviour
                     {
                         canMove = true;
                         canShoot = true;
+                        freazeMultiplicatorTimer = false;
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<Text>().text = "GO!";
                         if(vibrationHappening == null) StartCoroutine(vibration(0.2f, 1f, 1f));
@@ -187,10 +198,13 @@ public class GameController : MonoBehaviour
                 if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0, 0.5f));
                 break;
             case "betweenLevel":
+                score += (int) Math.Round(inStreakScore * scoreMultiplicator);
+                inStreakScore = 0;
                 canMove = false;
                 canShoot = false;
                 getLensDistorsionTo(0.4f, 0.1f);
                 nextLevelTextDisplay.SetActive(true);
+                freazeMultiplicatorTimer = true;
                 break;
             case "startMenu":
                 getLensDistorsionTo(0.4f, 0.1f);
@@ -230,7 +244,7 @@ public class GameController : MonoBehaviour
         Gamepad.current.SetMotorSpeeds(0, 0);
         vibrationHappening = null;
     }
-
+    
     void scoreDisplay()
     {
         if (score < 10) scoreText = "00000";
@@ -241,6 +255,27 @@ public class GameController : MonoBehaviour
         else if (score < 1000000) scoreText = "";
         else scoreText = "bro how did you do that ? ";
         scoreTextDisplay.GetComponent<Text>().text = scoreText + score.ToString();
+    }
+    
+    void inStreakScoreDisplayF()
+    {
+        if (inStreakScore < 10) scoreText = "+00000";
+        else if (inStreakScore < 100) scoreText = "+0000";
+        else if (inStreakScore < 1000) scoreText = "+000";
+        else if (inStreakScore < 10000) scoreText = "+00";
+        else if (inStreakScore < 100000) scoreText = "+0";
+        else if (inStreakScore < 1000000) scoreText = "+";
+        else scoreText = "bro how did you do that ? ";
+        inStreakScoreDisplay.GetComponent<Text>().text = scoreText + inStreakScore.ToString();
+    }
+
+    void endStreak()
+    {
+        score += (int)Math.Round(inStreakScore * scoreMultiplicator);
+        scoreMultiplicator = 1;
+        inStreakScore = 0;
+        endOfMultiplicatorTime = 0;
+        streakBool = false;
     }
 
     void restart()
@@ -267,15 +302,16 @@ public class GameController : MonoBehaviour
     {
         scoreMultiplicatorIncrement(0.1f);
         if (scoreMultiplicator > maxScoreMultiplicator) scoreMultiplicator = maxScoreMultiplicator;
-        score += 10;
+        inStreakScore += 10;
         if(vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
+        endOfMultiplicatorTime = Time.time + multiplicatorTime;
     }
 
     public void hitPlayer()
     {
-        scoreMultiplicator = 1;
         if (!player.GetComponent<player>().invincibility)
         {
+            endStreak();
             player.gameObject.GetComponent<Animator>().Play("playerHit");
             StopAllCoroutines();
             vibrationHappening = StartCoroutine(vibration(2f, 0.2f, 0.2f));
@@ -284,8 +320,8 @@ public class GameController : MonoBehaviour
 
     void scoreMultiplicatorIncrement(float increment)
     {
+        streakBool = true;
         scoreMultiplicator = (float) Math.Round(increment + scoreMultiplicator, 2);
-        Debug.Log(scoreMultiplicator * 10 + " et entier : " + (scoreMultiplicator * 10) % 10);
 
         if ((scoreMultiplicator*10)%10 == 0)
         {
