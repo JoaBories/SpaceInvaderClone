@@ -9,11 +9,11 @@ public class AlienGroup : MonoBehaviour
     [Header("movement")]
     public GameObject maxRight;
     public GameObject maxLeft;
-    Vector2 globalSpeed;
+    public Vector2 globalSpeed;
     bool goingRight = true;
 
     [Header("difficulty")]
-    public List<Vector2> inRoundDifficultyLevelList = new List<Vector2> {new Vector2(0, 1.5f), new Vector2(0, 3f), new Vector2(1, 6f) };
+    public List<Vector2> inRoundDifficultyLevelList;
     int alienN;
     int initialAlienCount;
     int nextInRoundDifficultyLevel;
@@ -61,7 +61,7 @@ public class AlienGroup : MonoBehaviour
 
             if (alienN <= inRoundDifficultyLevelList[nextInRoundDifficultyLevel][0] && !inRoundMaxDifficulty)
             {
-                globalSpeed.x = inRoundDifficultyLevelList[nextInRoundDifficultyLevel][1];
+                globalSpeed.x = inRoundDifficultyLevelList[nextInRoundDifficultyLevel][1] * baseSpeed.x;
                 if (nextInRoundDifficultyLevel != inRoundDifficultyLevelList.Count - 1) nextInRoundDifficultyLevel++;
                 else inRoundMaxDifficulty = true;
             }

@@ -1,14 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
-
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
@@ -23,10 +20,18 @@ public class GameController : MonoBehaviour
     [Header("Game Objects")]
     public GameObject player;
     public GameObject alienGroup;
+    public GameObject maxLeft;
+    public GameObject maxRight;
 
     [Header("Shield System")]
     public List<GameObject> shields = new List<GameObject>();
     public GameObject shieldTop;
+    public GameObject shieldPrefab;
+    public float shieldPosy;
+    GameObject currentShield;
+    bool shieldBool;
+    float shieldPos;
+    float shieldDistance;
 
     [Header("Level System")]
     public GameObject levelDisplay;
@@ -79,7 +84,7 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        levelDisplay.GetComponent<Text>().text = levelNumber.ToString();
+        levelDisplay.GetComponent<Text>().text = "ROUND " + levelNumber.ToString();
 
         if (scoreMultiplicator.ToString().Length == 3) scoreMultiplicatorDisplay.GetComponent<Text>().text = "X" + scoreMultiplicator.ToString()[0].ToString() + "." + scoreMultiplicator.ToString()[2].ToString();
         else scoreMultiplicatorDisplay.GetComponent<Text>().text = "X" + scoreMultiplicator.ToString()[0].ToString();
@@ -134,7 +139,7 @@ public class GameController : MonoBehaviour
                     }
                 }
 
-                if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= shieldTop.transform.position.y) desactivateShields();
+                if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= shieldTop.transform.position.y && shieldBool) desactivateShields();
                 if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= earthLevel.transform.position.y) switchState("loose");
                 if (!alienGroup.activeSelf)
                 {
@@ -287,7 +292,7 @@ public class GameController : MonoBehaviour
 
     void startLevel(int levelNumber)
     {
-        activateShields();
+        activateShields(levelSpecsList[levelNumber - 1].shieldNumber);
         player.GetComponent<Animator>().Play("playerSpawn");
         spawnAlien(levelSpecsList[levelNumber - 1].size, levelSpecsList[levelNumber - 1].speed ,levelSpecsList[levelNumber - 1].shootCooldown);
     }
@@ -331,22 +336,33 @@ public class GameController : MonoBehaviour
 
     void desactivateShields()
     {
-        if (shields[0].activeSelf) if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
-        foreach (GameObject shield in shields)
+        if (shields[0].activeSelf && vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
+        int shieldcount = shields.Count;
+        GameObject shield;
+        for (int i = 0; i < shieldcount; i++)
         {
-            shield.SetActive(false);
+            shield = shields[0];
+            shields.RemoveAt(0);
+            Destroy(shield);
         }
-    } 
-
-    void activateShields()
+        shields.Clear();
+        shieldBool = false;
+    }
+    void activateShields(int shieldNumber)
     {
-        foreach(GameObject shield in shields)
+        if(shieldBool) desactivateShields();
+
+        shieldBool = true;
+        if (shieldNumber == 1) shieldPos = 0;
+        shieldDistance = (maxRight.transform.position.x - maxLeft.transform.position.x)/ (shieldNumber+1);
+        shieldPos = maxLeft.transform.position.x + shieldDistance;
+
+        for (int i = 0; i < shieldNumber; i++)
         {
-            shield.SetActive(true);
-            for (int i = 0; i < shield.transform.childCount; i++)
-            {
-                shield.transform.GetChild(i).gameObject.SetActive(true);
-            }
+            currentShield = Instantiate(shieldPrefab, transform);
+            currentShield.transform.localPosition = new Vector3(shieldPos, shieldPosy, 0);
+            shields.Add(currentShield);
+            shieldPos += shieldDistance;
         }
     }
 }
