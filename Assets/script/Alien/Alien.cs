@@ -11,6 +11,8 @@ public class Alien : MonoBehaviour
     SpriteRenderer spriteRenderer;
     float posY;
 
+    public AudioClip hitSound;
+
     private void Update()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -25,6 +27,7 @@ public class Alien : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameController.Instance.playSoundClip(hitSound, transform);
         if (transform.position.y >= 1.5 && isAlienBelow())
         {
             GameController.Instance.longShot();
@@ -33,7 +36,7 @@ public class Alien : MonoBehaviour
         else
         {
             GameController.Instance.shot();
-            Instantiate(TextPrefabLongShot, transform.position, Quaternion.identity);
+            Instantiate(TextPrefabShot, transform.position, Quaternion.identity);
         }
     }
 

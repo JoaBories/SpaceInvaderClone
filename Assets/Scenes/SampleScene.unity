@@ -649,6 +649,7 @@ MonoBehaviour:
   speed: 5
   canShoot: 1
   invincibility: 0
+  shootSound: {fileID: 8300000, guid: 813e13e10498472448a2edce3e51b552, type: 3}
 --- !u!212 &381377141
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -808,8 +809,8 @@ Transform:
   m_GameObject: {fileID: 427289838}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.7, y: -0.5, z: -147.43439}
-  m_LocalScale: {x: 0.1, y: 9, z: 1}
+  m_LocalPosition: {x: -11.5, y: -0.5, z: -147.43439}
+  m_LocalScale: {x: 10, y: 9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 805374284}
@@ -1935,6 +1936,10 @@ MonoBehaviour:
   secondeTimerBar: {fileID: 0}
   missedTextDisplay: {fileID: 1305615364}
   multiplicatorTime: 5
+  soundObject: {fileID: 8871414758494308656, guid: fe261e849a4024d4a92ccd9ba97b4e25, type: 3}
+  hurtSound: {fileID: 8300000, guid: 43310bf440180fc44aaf9e091881f909, type: 3}
+  startSound: {fileID: 8300000, guid: b29f9e3439cbcb548a27bba423bbf976, type: 3}
+  finishWaveSound: {fileID: 0}
 --- !u!1 &1305615364
 GameObject:
   m_ObjectHideFlags: 0
@@ -2563,8 +2568,8 @@ Transform:
   m_GameObject: {fileID: 1646022768}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.7, y: -0.5, z: -147.43439}
-  m_LocalScale: {x: 0.1, y: 9, z: 1}
+  m_LocalPosition: {x: 11.5, y: -0.52, z: -147.43439}
+  m_LocalScale: {x: 10, y: 9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 805374284}

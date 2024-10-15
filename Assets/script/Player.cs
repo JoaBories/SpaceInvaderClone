@@ -15,6 +15,8 @@ public class player : MonoBehaviour
     public bool canShoot = true;
     public bool invincibility = false;
 
+    public AudioClip shootSound;
+
     GameObject currentBullet;
 
     void Start()
@@ -48,6 +50,7 @@ public class player : MonoBehaviour
             {
                 if (!currentBullet.activeSelf)
                 {
+                    GameController.Instance.playSoundClip(shootSound, transform);
                     Destroy(currentBullet);
                     currentBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
                 }

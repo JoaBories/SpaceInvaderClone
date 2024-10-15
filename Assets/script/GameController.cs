@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
     Controls controls;
     bool startPressed;
+    private Coroutine vibrationHappening;
 
     [Header("Effect System")]
     public GameObject gameCamera;
@@ -69,7 +70,12 @@ public class GameController : MonoBehaviour
     float maxScoreMultiplicator = 5;
     string scoreText;
 
-    private Coroutine vibrationHappening;
+    [Header("Sound System")]
+    public AudioSource soundObject;
+    public AudioClip hurtSound;
+    public AudioClip startSound;
+    public AudioClip finishWaveSound;
+
 
     void Start()
     {
@@ -151,6 +157,7 @@ public class GameController : MonoBehaviour
                 if (!alienGroup.activeSelf)
                 {
                     levelNumber++;
+                    playSoundClip(finishWaveSound, transform);
                     if (levelNumber > levelSpecsList.Count) switchState("win");
                     else switchState("betweenLevel");
                 }
@@ -159,6 +166,7 @@ public class GameController : MonoBehaviour
             case "betweenLevel":
                 if (controls.Gameplay.Start.triggered)
                 {
+                    playSoundClip(hurtSound, transform);
                     switchState("running");
                     startLevel(levelNumber);
                 }
@@ -168,6 +176,7 @@ public class GameController : MonoBehaviour
                 alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
+                    playSoundClip(hurtSound, transform);
                     switchState("running");
                     restart();
                 }
@@ -177,6 +186,7 @@ public class GameController : MonoBehaviour
                 alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
+                    playSoundClip(hurtSound, transform);
                     switchState("running");
                     restart();
                 }
@@ -185,6 +195,7 @@ public class GameController : MonoBehaviour
             case "startMenu":
                 if (controls.Gameplay.Start.triggered)
                 {
+                    playSoundClip(hurtSound, transform);
                     switchState("running");
                     startLevel(levelNumber);
                 }
@@ -326,6 +337,7 @@ public class GameController : MonoBehaviour
         if(vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
         endOfMultiplicatorTime = Time.time + multiplicatorTime;
     }
+
     public void longShot()
     {
         scoreMultiplicatorIncrement(0.2f);
@@ -356,6 +368,7 @@ public class GameController : MonoBehaviour
     {
         if (!player.GetComponent<player>().invincibility)
         {
+            playSoundClip(hurtSound, transform);
             endStreak();
             player.gameObject.GetComponent<Animator>().Play("playerHit");
             StopAllCoroutines();
@@ -373,6 +386,18 @@ public class GameController : MonoBehaviour
             timerBar.GetComponent<Animator>().Play("multiplicatorNewInt");
         }
     }
+
+    public void playSoundClip(AudioClip audioClip, Transform spawnTransform, float volume = 1f)
+    {
+        AudioSource audioSource = Instantiate(soundObject, spawnTransform.position, Quaternion.identity);
+        audioSource.clip = audioClip;
+        audioSource.volume = volume;
+        audioSource.Play();
+        Destroy(audioSource, audioSource.clip.length);
+
+    }
+
+
 
     void desactivateShields()
     {
