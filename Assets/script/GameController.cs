@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -86,10 +87,10 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        levelDisplay.GetComponent<Text>().text = "ROUND " + levelNumber.ToString();
+        levelDisplay.GetComponent<TextMeshProUGUI>().text = "ROUND " + levelNumber.ToString();
 
-        if (scoreMultiplicator.ToString().Length == 3) scoreMultiplicatorDisplay.GetComponent<Text>().text = "X" + scoreMultiplicator.ToString()[0].ToString() + "." + scoreMultiplicator.ToString()[2].ToString();
-        else scoreMultiplicatorDisplay.GetComponent<Text>().text = "X" + scoreMultiplicator.ToString()[0].ToString();
+        if (scoreMultiplicator.ToString().Length == 3) scoreMultiplicatorDisplay.GetComponent<TextMeshProUGUI>().text = "X" + scoreMultiplicator.ToString()[0].ToString() + "." + scoreMultiplicator.ToString()[2].ToString();
+        else scoreMultiplicatorDisplay.GetComponent<TextMeshProUGUI>().text = "X" + scoreMultiplicator.ToString()[0].ToString();
         
         scoreDisplay();
         inStreakScoreDisplayF();
@@ -121,27 +122,27 @@ public class GameController : MonoBehaviour
                         startTimerText.SetActive(false);
                         endTimer = true;
                     }
-                    else if (startTimerTime + 1.5f <= Time.time && startTimerText.GetComponent<Text>().text == "1")
+                    else if (startTimerTime + 1.5f <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "1")
                     {
                         canMove = true;
                         canShoot = true;
                         freazeMultiplicatorTimer = false;
                         startTimerText.GetComponent<Animator>().Play("textAppear");
-                        startTimerText.GetComponent<Text>().text = "GO!";
+                        startTimerText.GetComponent<TextMeshProUGUI>().text = "GO!";
                         timerBar.GetComponent<Animator>().Play("multiplicatorIdle");
-                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 1f, 1f));
+                        if (vibrationHappening == null) StartCoroutine(vibration(1f, 1f, 1f));
                     }
-                    else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<Text>().text == "2")
+                    else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "2")
                     {
                         startTimerText.GetComponent<Animator>().Play("textAppear");
-                        startTimerText.GetComponent<Text>().text = "1";
-                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0, 0.5f));
+                        startTimerText.GetComponent<TextMeshProUGUI>().text = "1";
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
                     }
-                    else if (startTimerTime + 0.5f <= Time.time && startTimerText.GetComponent<Text>().text == "3")
+                    else if (startTimerTime + 0.5f <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "3")
                     {
                         startTimerText.GetComponent<Animator>().Play("textAppear");
-                        startTimerText.GetComponent<Text>().text = "2";
-                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0));
+                        startTimerText.GetComponent<TextMeshProUGUI>().text = "2";
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
                     }
                 }
 
@@ -206,8 +207,8 @@ public class GameController : MonoBehaviour
                 startTimerTime = Time.time;
                 endTimer = false;
                 startTimerText.GetComponent<Animator>().Play("textAppear");
-                startTimerText.GetComponent<Text>().text = "3";
-                if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0, 0.5f));
+                startTimerText.GetComponent<TextMeshProUGUI>().text = "3";
+                if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
                 break;
             case "betweenLevel":
                 score += (int) Math.Round(inStreakScore * scoreMultiplicator);
@@ -273,19 +274,19 @@ public class GameController : MonoBehaviour
         else if (score < 100000) scoreText = "0";
         else if (score < 1000000) scoreText = "";
         else scoreText = "bro how did you do that ? ";
-        scoreTextDisplay.GetComponent<Text>().text = scoreText + score.ToString();
+        scoreTextDisplay.GetComponent<TextMeshProUGUI>().text = scoreText + score.ToString();
     }
     
     void inStreakScoreDisplayF()
     {
-        if (inStreakScore < 10) scoreText = "+00000";
-        else if (inStreakScore < 100) scoreText = "+0000";
-        else if (inStreakScore < 1000) scoreText = "+000";
-        else if (inStreakScore < 10000) scoreText = "+00";
-        else if (inStreakScore < 100000) scoreText = "+0";
-        else if (inStreakScore < 1000000) scoreText = "+";
+        if (inStreakScore < 10) scoreText = "00000";
+        else if (inStreakScore < 100) scoreText = "0000";
+        else if (inStreakScore < 1000) scoreText = "000";
+        else if (inStreakScore < 10000) scoreText = "00";
+        else if (inStreakScore < 100000) scoreText = "0";
+        else if (inStreakScore < 1000000) scoreText = "";
         else scoreText = "bro how did you do that ? ";
-        inStreakScoreDisplay.GetComponent<Text>().text = scoreText + inStreakScore.ToString();
+        inStreakScoreDisplay.GetComponent<TextMeshProUGUI>().text = scoreText + inStreakScore.ToString();
     }
 
     void endStreak()
@@ -317,12 +318,20 @@ public class GameController : MonoBehaviour
         alienGroup.GetComponent<AlienGroup>().spawn(size, speed, alienShootCooldown);
     }
 
-    public void killedAlien()
+    public void shot()
     {
         scoreMultiplicatorIncrement(0.1f);
         if (scoreMultiplicator > maxScoreMultiplicator) scoreMultiplicator = maxScoreMultiplicator;
         inStreakScore += 10;
         if(vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
+        endOfMultiplicatorTime = Time.time + multiplicatorTime;
+    }
+    public void longShot()
+    {
+        scoreMultiplicatorIncrement(0.2f);
+        if (scoreMultiplicator > maxScoreMultiplicator) scoreMultiplicator = maxScoreMultiplicator;
+        inStreakScore += 50;
+        if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 1f));
         endOfMultiplicatorTime = Time.time + multiplicatorTime;
     }
 
@@ -350,7 +359,7 @@ public class GameController : MonoBehaviour
             endStreak();
             player.gameObject.GetComponent<Animator>().Play("playerHit");
             StopAllCoroutines();
-            vibrationHappening = StartCoroutine(vibration(2f, 0.2f, 0.2f));
+            vibrationHappening = StartCoroutine(vibration(0.2f, 0.2f, 2f));
         }
     }
 

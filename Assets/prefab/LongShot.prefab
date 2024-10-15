@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -6029143431418505424}
   - component: {fileID: 477168350963981586}
   m_Layer: 0
-  m_Name: +10text
+  m_Name: LongShot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3876822962525528980, guid: fd8abb60ca24c5c4db19ce4a77b353e8, type: 2}
+  - {fileID: -7373161744239526487, guid: 77a01ce37cac35a4b9e815bae7d110ad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -101,17 +101,19 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 10
+  m_text: '50
+
+    LongShot'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: fd8abb60ca24c5c4db19ce4a77b353e8, type: 2}
-  m_sharedMaterial: {fileID: -3876822962525528980, guid: fd8abb60ca24c5c4db19ce4a77b353e8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 77a01ce37cac35a4b9e815bae7d110ad, type: 2}
+  m_sharedMaterial: {fileID: -7373161744239526487, guid: 77a01ce37cac35a4b9e815bae7d110ad, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294834700
-  m_fontColor: {r: 0.04705883, g: 0.9803922, b: 0.9921569, a: 1}
+    rgba: 4294910859
+  m_fontColor: {r: 0.544441, g: 0.13679248, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -164,7 +166,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.28460312, y: 0.19103482, z: 0.291817, w: 0.21079299}
+  m_margin: {x: -0.5, y: 0, z: -0.5, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0

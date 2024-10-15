@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 16, y: 14, z: 1}
+  m_LocalScale: {x: 14, y: 12, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -172,7 +172,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47cc66cae7a86a489a6de2f082c42da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreTextPrefab: {fileID: 4167286839641548423, guid: 2a1838ee7fd5a124cb022290c0184a5d, type: 3}
+  TextPrefabShot: {fileID: 4167286839641548423, guid: 2a1838ee7fd5a124cb022290c0184a5d, type: 3}
+  TextPrefabLongShot: {fileID: 4167286839641548423, guid: fda54b2e8e87880428f04e375999c6a5, type: 3}
   red: {r: 1, g: 0.4, b: 0.4, a: 1}
   violet: {r: 0.67602223, g: 0.4481132, b: 1, a: 1}
 --- !u!95 &1233829830984316197
