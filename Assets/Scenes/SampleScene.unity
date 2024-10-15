@@ -1939,7 +1939,7 @@ MonoBehaviour:
   soundObject: {fileID: 8871414758494308656, guid: fe261e849a4024d4a92ccd9ba97b4e25, type: 3}
   hurtSound: {fileID: 8300000, guid: 43310bf440180fc44aaf9e091881f909, type: 3}
   startSound: {fileID: 8300000, guid: b29f9e3439cbcb548a27bba423bbf976, type: 3}
-  finishWaveSound: {fileID: 0}
+  finishWaveSound: {fileID: 8300000, guid: 6ee588aa076ec2a44a7a5f6cbfd1b4b0, type: 3}
 --- !u!1 &1305615364
 GameObject:
   m_ObjectHideFlags: 0

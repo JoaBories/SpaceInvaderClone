@@ -166,7 +166,7 @@ public class GameController : MonoBehaviour
             case "betweenLevel":
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(hurtSound, transform);
+                    playSoundClip(startSound, transform);
                     switchState("running");
                     startLevel(levelNumber);
                 }
@@ -176,7 +176,7 @@ public class GameController : MonoBehaviour
                 alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(hurtSound, transform);
+                    playSoundClip(startSound, transform);
                     switchState("running");
                     restart();
                 }
@@ -186,7 +186,7 @@ public class GameController : MonoBehaviour
                 alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(hurtSound, transform);
+                    playSoundClip(startSound, transform);
                     switchState("running");
                     restart();
                 }
@@ -195,7 +195,7 @@ public class GameController : MonoBehaviour
             case "startMenu":
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(hurtSound, transform);
+                    playSoundClip(startSound, transform);
                     switchState("running");
                     startLevel(levelNumber);
                 }
@@ -393,7 +393,8 @@ public class GameController : MonoBehaviour
         audioSource.clip = audioClip;
         audioSource.volume = volume;
         audioSource.Play();
-        Destroy(audioSource, audioSource.clip.length);
+        float clipLength = audioSource.clip.length;
+        Destroy(audioSource.gameObject, clipLength);
 
     }
 
