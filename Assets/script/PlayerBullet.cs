@@ -10,7 +10,11 @@ public class PlayerBullet : MonoBehaviour
     void Update()
     {
         if (transform.position.y < maxHeight) transform.position += new Vector3(0, speed * Time.deltaTime, 0);
-        else gameObject.SetActive(false);
+        else
+        {
+            gameObject.SetActive(false);
+            GameController.Instance.failedShot();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

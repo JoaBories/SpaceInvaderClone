@@ -55,7 +55,9 @@ public class GameController : MonoBehaviour
     public GameObject scoreMultiplicatorDisplay;
     public GameObject inStreakScoreDisplay;
     public GameObject scoreTextDisplay;
-    public GameObject multiplicatorTimeDisplay;
+    public GameObject timerBar;
+    public GameObject secondeTimerBar;
+    public GameObject missedTextDisplay;
     public float multiplicatorTime;
     bool streakBool = false;
     bool freazeMultiplicatorTimer = false;
@@ -96,10 +98,13 @@ public class GameController : MonoBehaviour
 
         if (streakBool)
         {
-            multiplicatorTimeDisplay.SetActive(true);
-            multiplicatorTimeDisplay.GetComponent<Text>().text = (endOfMultiplicatorTime - Time.time).ToString();
+            timerBar.SetActive(true);
+            timerBar.GetComponent<Image>().fillAmount = (endOfMultiplicatorTime - Time.time) / multiplicatorTime;
         }
-        else multiplicatorTimeDisplay.SetActive(false);
+        else
+        {
+            timerBar.SetActive(false);
+        }
 
         if (streakBool && endOfMultiplicatorTime - Time.time <= 0) endStreak();
 
@@ -123,7 +128,8 @@ public class GameController : MonoBehaviour
                         freazeMultiplicatorTimer = false;
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<Text>().text = "GO!";
-                        if(vibrationHappening == null) StartCoroutine(vibration(0.2f, 1f, 1f));
+                        timerBar.GetComponent<Animator>().Play("multiplicatorIdleCalm");
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 1f, 1f));
                     }
                     else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<Text>().text == "2")
                     {
@@ -208,6 +214,7 @@ public class GameController : MonoBehaviour
                 canMove = false;
                 canShoot = false;
                 getLensDistorsionTo(0.4f, 0.1f);
+                timerBar.GetComponent<Animator>().Play("multiplicatorIdleCalm");
                 nextLevelTextDisplay.SetActive(true);
                 freazeMultiplicatorTimer = true;
                 break;
@@ -218,10 +225,12 @@ public class GameController : MonoBehaviour
             case "win":
                 getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
+                endStreak();
                 break;
             case "loose":
                 getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
+                endStreak();
                 break;
         }
     }
@@ -312,6 +321,23 @@ public class GameController : MonoBehaviour
         endOfMultiplicatorTime = Time.time + multiplicatorTime;
     }
 
+    public void failedShot()
+    {
+        if(scoreMultiplicator > 1)
+        {
+            endStreak();
+            StartCoroutine(missedDisplay());
+        }
+        
+    }
+
+    IEnumerator missedDisplay()
+    {
+        missedTextDisplay.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        missedTextDisplay.SetActive(false);
+    }
+
     public void hitPlayer()
     {
         if (!player.GetComponent<player>().invincibility)
@@ -330,24 +356,28 @@ public class GameController : MonoBehaviour
 
         if ((scoreMultiplicator*10)%10 == 0)
         {
-            scoreMultiplicatorDisplay.GetComponent<Animator>().Play("multiplicatorNewInt");
+            timerBar.GetComponent<Animator>().Play("multiplicatorNewInt");
         }
     }
 
     void desactivateShields()
     {
-        if (shields[0].activeSelf && vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
-        int shieldcount = shields.Count;
-        GameObject shield;
-        for (int i = 0; i < shieldcount; i++)
+        if (shields.Count > 0)
         {
-            shield = shields[0];
-            shields.RemoveAt(0);
-            Destroy(shield);
+            if (shields[0].activeSelf && vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
+            int shieldcount = shields.Count;
+            GameObject shield;
+            for (int i = 0; i < shieldcount; i++)
+            {
+                shield = shields[0];
+                shields.RemoveAt(0);
+                Destroy(shield);
+            }
         }
         shields.Clear();
         shieldBool = false;
     }
+
     void activateShields(int shieldNumber)
     {
         if(shieldBool) desactivateShields();
