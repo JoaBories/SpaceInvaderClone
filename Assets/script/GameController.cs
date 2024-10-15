@@ -130,6 +130,7 @@ public class GameController : MonoBehaviour
                     }
                     else if (startTimerTime + 1.5f <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "1")
                     {
+                        playSoundClip(startSound, transform);
                         canMove = true;
                         canShoot = true;
                         freazeMultiplicatorTimer = false;
@@ -140,12 +141,14 @@ public class GameController : MonoBehaviour
                     }
                     else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "2")
                     {
+                        playSoundClip(startSound, transform);
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<TextMeshProUGUI>().text = "1";
                         if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
                     }
                     else if (startTimerTime + 0.5f <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "3")
                     {
+                        playSoundClip(startSound, transform);
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<TextMeshProUGUI>().text = "2";
                         if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
@@ -166,7 +169,6 @@ public class GameController : MonoBehaviour
             case "betweenLevel":
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(startSound, transform);
                     switchState("running");
                     startLevel(levelNumber);
                 }
@@ -176,7 +178,6 @@ public class GameController : MonoBehaviour
                 alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(startSound, transform);
                     switchState("running");
                     restart();
                 }
@@ -186,7 +187,6 @@ public class GameController : MonoBehaviour
                 alienGroup.SetActive(false);
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(startSound, transform);
                     switchState("running");
                     restart();
                 }
@@ -195,7 +195,6 @@ public class GameController : MonoBehaviour
             case "startMenu":
                 if (controls.Gameplay.Start.triggered)
                 {
-                    playSoundClip(startSound, transform);
                     switchState("running");
                     startLevel(levelNumber);
                 }
@@ -219,6 +218,7 @@ public class GameController : MonoBehaviour
                 endTimer = false;
                 startTimerText.GetComponent<Animator>().Play("textAppear");
                 startTimerText.GetComponent<TextMeshProUGUI>().text = "3";
+                playSoundClip(startSound, transform);
                 if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
                 break;
             case "betweenLevel":
