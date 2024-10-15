@@ -173,3 +173,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minHeight: -5
   speed: 5
+  red: {r: 1, g: 0.4, b: 0.4, a: 1}
+  violet: {r: 0.6745098, g: 0.44705883, b: 1, a: 1}

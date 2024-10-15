@@ -155,6 +155,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""2bdfda5e-003c-4709-bc4b-5825c5feadb0"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""b158e35f-c10b-4686-9468-0b4563001ca2"",
                     ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",

@@ -43,12 +43,12 @@ public class GameController : MonoBehaviour
     public bool canShoot;
     public bool canMove;
 
-
     [Header("Game State System")]
     public GameObject nextLevelTextDisplay;
     public GameObject startTextDisplay;
     public GameObject restartTextDisplay;
     public GameObject earthLevel;
+    public GameObject pressStartTextDisplay;
     public string state;
 
     [Header("Score System")]
@@ -128,7 +128,7 @@ public class GameController : MonoBehaviour
                         freazeMultiplicatorTimer = false;
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<Text>().text = "GO!";
-                        timerBar.GetComponent<Animator>().Play("multiplicatorIdleCalm");
+                        timerBar.GetComponent<Animator>().Play("multiplicatorIdle");
                         if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 1f, 1f));
                     }
                     else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<Text>().text == "2")
@@ -198,6 +198,7 @@ public class GameController : MonoBehaviour
         {
             case "running":
                 getLensDistorsionTo(0.2f, 1f);
+                pressStartTextDisplay.SetActive(false);
                 nextLevelTextDisplay.SetActive(false);
                 startTextDisplay.SetActive(false);
                 restartTextDisplay.SetActive(false);
@@ -216,20 +217,24 @@ public class GameController : MonoBehaviour
                 getLensDistorsionTo(0.4f, 0.1f);
                 timerBar.GetComponent<Animator>().Play("multiplicatorIdleCalm");
                 nextLevelTextDisplay.SetActive(true);
+                pressStartTextDisplay.SetActive(true);
                 freazeMultiplicatorTimer = true;
                 break;
             case "startMenu":
                 getLensDistorsionTo(0.4f, 0.1f);
                 startTextDisplay.SetActive(true);
+                pressStartTextDisplay.SetActive(true);
                 break;
             case "win":
                 getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
+                pressStartTextDisplay.SetActive(true);
                 endStreak();
                 break;
             case "loose":
                 getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
+                pressStartTextDisplay.SetActive(true);
                 endStreak();
                 break;
         }

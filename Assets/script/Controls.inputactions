@@ -1,5 +1,5 @@
 {
-    "name": "GamepadControls",
+    "name": "Controls",
     "maps": [
         {
             "name": "Gameplay",
@@ -124,6 +124,17 @@
                     "name": "",
                     "id": "e69548aa-9aa8-4027-95e7-b886c07cd730",
                     "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2bdfda5e-003c-4709-bc4b-5825c5feadb0",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
