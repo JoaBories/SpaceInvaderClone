@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
+using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -69,7 +70,6 @@ public class GameController : MonoBehaviour
     public GameObject inStreakScoreDisplay;
     public GameObject scoreTextDisplay;
     public GameObject timerBar;
-    public GameObject secondeTimerBar;
     public GameObject missedTextDisplay;
     public float multiplicatorTime;
     bool streakBool = false;
@@ -91,19 +91,23 @@ public class GameController : MonoBehaviour
     public AudioClip looseShieldSound;
 
     [Header("HighScore System")]
-    public GameObject TextInputDisplay;
     public GameObject inputFieldPlayerName;
+    public GameObject highScoreDisplay;
     public List<HighScore> highScores;
+    string playerName;
     string filePath;
 
     void Start()
     {
         filePath = Path.Combine(Application.persistentDataPath, "highscores.json");
+        Debug.Log(filePath);
+        Debug.Log(highScores[0].score);
+        saveHighScores();
         globalVolume.GetComponent<Volume>().profile.TryGet(out lensDistortion);
         Instance = this;
         levelNumber = 1;
         score = 0;
-        switchState("startMenu");
+        switchState("end");
         controls = new Controls();
         controls.Gameplay.Enable();
         canMove = false;
@@ -196,10 +200,19 @@ public class GameController : MonoBehaviour
 
             case "end":
                 alienGroup.SetActive(false);
+                if (controls.Gameplay.Start.triggered)
+                {
+                    playerName = inputFieldPlayerName.GetComponent<TMP_InputField>().text;
+                    addHighScores(score, playerName, levelNumber);
+                    switchState("highScore");
+                }
 
                 break;
 
             case "highScore":
+                loadHighScores();
+                highScoreDisplay.GetComponent<TextMeshProUGUI>().text = highScores[0].playerName + " " + highScores[0].score + " " + highScores[0].level;
+
 
                 break;
 
@@ -228,6 +241,10 @@ public class GameController : MonoBehaviour
         switch (nexState)
         {
             case "running":
+                highScoreDisplay.SetActive(false);
+                levelDisplay.SetActive(true);
+                scoreTextDisplay.SetActive(true);
+                inStreakScoreDisplay.SetActive(true);
                 getLensDistorsionTo(0.2f, 1f);
                 pressStartTextDisplay.SetActive(false);
                 nextLevelTextDisplay.SetActive(false);
@@ -242,6 +259,7 @@ public class GameController : MonoBehaviour
                 if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
                 break;
             case "betweenLevel":
+                highScoreDisplay.SetActive(false);
                 score += (int) Math.Round(inStreakScore * scoreMultiplicator);
                 inStreakScore = 0;
                 canMove = false;
@@ -253,19 +271,29 @@ public class GameController : MonoBehaviour
                 freazeMultiplicatorTimer = true;
                 break;
             case "startMenu":
+                highScoreDisplay.SetActive(false);
                 getLensDistorsionTo(0.4f, 0.1f);
                 startTextDisplay.SetActive(true);
                 pressStartTextDisplay.SetActive(true);
                 break;
             case "end":
+                highScoreDisplay.SetActive(false);
+                levelDisplay.SetActive(false);
+                scoreTextDisplay.SetActive(false);
+                inStreakScoreDisplay.SetActive(false);
+                inputFieldPlayerName.SetActive(true);
+                inputFieldPlayerName.GetComponent<TMP_InputField>().ActivateInputField();
                 getLensDistorsionTo(0.4f, 0.1f);
                 endStreak();
 
                 break;
             case "highScore":
+                inputFieldPlayerName.SetActive(false);
+                highScoreDisplay.SetActive(true);
 
                 break;
             case "restart":
+                highScoreDisplay.SetActive(false);
                 getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
                 pressStartTextDisplay.SetActive(true);
@@ -276,8 +304,8 @@ public class GameController : MonoBehaviour
 
     public void saveHighScores()
     {
-        string json = JsonUtility.ToJson(highScores, true);
-        File.WriteAllText(filePath, json);
+        //string json = JsonUtility.ToJson(highScores, true);
+        //File.WriteAllText(filePath, json);
     }
 
     public void loadHighScores()
