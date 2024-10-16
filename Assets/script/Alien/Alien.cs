@@ -10,14 +10,16 @@ public class Alien : MonoBehaviour
     public Color violet;
     SpriteRenderer spriteRenderer;
     float posY;
+    int colAlienCount;
 
     public AudioClip hitSound;
+
 
     private void Update()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (transform.position.y < -0.5f) spriteRenderer.color = red;
-        else if (transform.position.y > 2) spriteRenderer.color = violet;
+        else if (transform.position.y > 1) spriteRenderer.color = violet;
         else
         {
             spriteRenderer.color = Color.Lerp(red, violet, (transform.position.y + 0.5f) / 2.5f);
@@ -43,8 +45,17 @@ public class Alien : MonoBehaviour
     bool isAlienBelow()
     {
         posY = transform.position.y;
-        if (posY > GameController.Instance.alienGroup.GetComponent<AlienGroup>().bottomAlienPos()) return true;
-        else return false;
-        
+        colAlienCount = transform.parent.childCount;
+        if (colAlienCount > 1)
+        {
+            for (int i = 0; i < colAlienCount; i++)
+            {
+                if(transform.parent.GetChild(i).transform.position.y < posY)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

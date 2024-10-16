@@ -1871,10 +1871,10 @@ MonoBehaviour:
   levelDisplay: {fileID: 1532778838}
   startTimerText: {fileID: 778104766}
   levelSpecsList:
-  - size: {x: 8, y: 1}
-    speed: {x: 0.4, y: 0.5}
+  - size: {x: 6, y: 1}
+    speed: {x: 0.3, y: 0.5}
     shootCooldown: 2
-    shieldNumber: 5
+    shieldNumber: 4
     shieldSize: {x: 1, y: 1}
   - size: {x: 5, y: 2}
     speed: {x: 0.6, y: 0.5}
@@ -1939,7 +1939,10 @@ MonoBehaviour:
   soundObject: {fileID: 8871414758494308656, guid: fe261e849a4024d4a92ccd9ba97b4e25, type: 3}
   hurtSound: {fileID: 8300000, guid: 43310bf440180fc44aaf9e091881f909, type: 3}
   startSound: {fileID: 8300000, guid: b29f9e3439cbcb548a27bba423bbf976, type: 3}
+  startGoSound: {fileID: 8300000, guid: cfb09a49a2ef19a459d30c3932a99836, type: 3}
   finishWaveSound: {fileID: 8300000, guid: 6ee588aa076ec2a44a7a5f6cbfd1b4b0, type: 3}
+  missSound: {fileID: 8300000, guid: 855ff19fb3dc9bc4c8f40fa7f409314f, type: 3}
+  looseShieldSound: {fileID: 8300000, guid: 443f529350f78a94cae7afcb500d131a, type: 3}
 --- !u!1 &1305615364
 GameObject:
   m_ObjectHideFlags: 0

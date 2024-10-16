@@ -74,7 +74,10 @@ public class GameController : MonoBehaviour
     public AudioSource soundObject;
     public AudioClip hurtSound;
     public AudioClip startSound;
+    public AudioClip startGoSound;
     public AudioClip finishWaveSound;
+    public AudioClip missSound;
+    public AudioClip looseShieldSound;
 
 
     void Start()
@@ -130,28 +133,28 @@ public class GameController : MonoBehaviour
                     }
                     else if (startTimerTime + 1.5f <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "1")
                     {
-                        playSoundClip(startSound, transform);
+                        playSoundClip(startGoSound, transform);
                         canMove = true;
                         canShoot = true;
                         freazeMultiplicatorTimer = false;
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<TextMeshProUGUI>().text = "GO!";
                         timerBar.GetComponent<Animator>().Play("multiplicatorIdle");
-                        if (vibrationHappening == null) StartCoroutine(vibration(1f, 1f, 1f));
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 1f, 1f));
                     }
                     else if (startTimerTime + 1 <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "2")
                     {
                         playSoundClip(startSound, transform);
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<TextMeshProUGUI>().text = "1";
-                        if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
                     }
                     else if (startTimerTime + 0.5f <= Time.time && startTimerText.GetComponent<TextMeshProUGUI>().text == "3")
                     {
                         playSoundClip(startSound, transform);
                         startTimerText.GetComponent<Animator>().Play("textAppear");
                         startTimerText.GetComponent<TextMeshProUGUI>().text = "2";
-                        if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
+                        if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
                     }
                 }
 
@@ -219,7 +222,7 @@ public class GameController : MonoBehaviour
                 startTimerText.GetComponent<Animator>().Play("textAppear");
                 startTimerText.GetComponent<TextMeshProUGUI>().text = "3";
                 playSoundClip(startSound, transform);
-                if (vibrationHappening == null) StartCoroutine(vibration(0.5f, 0.5f, 0.5f));
+                if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
                 break;
             case "betweenLevel":
                 score += (int) Math.Round(inStreakScore * scoreMultiplicator);
@@ -343,12 +346,13 @@ public class GameController : MonoBehaviour
         scoreMultiplicatorIncrement(0.2f);
         if (scoreMultiplicator > maxScoreMultiplicator) scoreMultiplicator = maxScoreMultiplicator;
         inStreakScore += 50;
-        if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 0.5f, 1f));
+        if (vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.3f, 1f, 1f));
         endOfMultiplicatorTime = Time.time + multiplicatorTime;
     }
 
     public void failedShot()
     {
+        playSoundClip(missSound, transform);
         if(scoreMultiplicator > 1)
         {
             endStreak();
@@ -372,7 +376,7 @@ public class GameController : MonoBehaviour
             endStreak();
             player.gameObject.GetComponent<Animator>().Play("playerHit");
             StopAllCoroutines();
-            vibrationHappening = StartCoroutine(vibration(0.2f, 0.2f, 2f));
+            vibrationHappening = StartCoroutine(vibration(2f, 0.2f, 0.2f));
         }
     }
 
@@ -400,8 +404,13 @@ public class GameController : MonoBehaviour
 
 
 
-    void desactivateShields()
+    void desactivateShields(bool activate = false)
     {
+        if (!activate)
+        {
+            playSoundClip(looseShieldSound, transform);
+        }
+
         if (shields.Count > 0)
         {
             if (shields[0].activeSelf && vibrationHappening == null) vibrationHappening = StartCoroutine(vibration(0.2f, 1f, 1f));
@@ -420,7 +429,7 @@ public class GameController : MonoBehaviour
 
     void activateShields(int shieldNumber)
     {
-        if(shieldBool) desactivateShields();
+        if(shieldBool) desactivateShields(true);
 
         shieldBool = true;
         if (shieldNumber == 1) shieldPos = 0;
