@@ -13,6 +13,7 @@ public class Alien : MonoBehaviour
     int colAlienCount;
 
     public AudioClip hitSound;
+    public bool destroyByBullet = false;
 
 
     private void Update()
@@ -29,16 +30,19 @@ public class Alien : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameController.Instance.playSoundClip(hitSound, transform);
-        if (transform.position.y >= 1.5 && isAlienBelow())
+        if (destroyByBullet)
         {
-            GameController.Instance.longShot();
-            Instantiate(TextPrefabLongShot, transform.position, Quaternion.identity);
-        }
-        else
-        {
-            GameController.Instance.shot();
-            Instantiate(TextPrefabShot, transform.position, Quaternion.identity);
+            GameController.Instance.playSoundClip(hitSound, transform);
+            if (transform.position.y >= 1.5 && isAlienBelow())
+            {
+                GameController.Instance.longShot();
+                Instantiate(TextPrefabLongShot, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                GameController.Instance.shot();
+                Instantiate(TextPrefabShot, transform.position, Quaternion.identity);
+            }
         }
     }
 

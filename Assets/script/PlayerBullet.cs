@@ -21,6 +21,7 @@ public class PlayerBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Alien"))
         {
+            collision.gameObject.GetComponent<Alien>().destroyByBullet = true;
             Destroy(collision.gameObject);
             gameObject.SetActive(false);
         }

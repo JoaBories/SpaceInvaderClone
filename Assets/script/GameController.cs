@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
-using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -63,6 +62,7 @@ public class GameController : MonoBehaviour
     public GameObject restartTextDisplay;
     public GameObject earthLevel;
     public GameObject pressStartTextDisplay;
+    public GameObject pressStartHighScoreTextDisplay;
     public string state;
 
     [Header("Score System")]
@@ -93,7 +93,9 @@ public class GameController : MonoBehaviour
     [Header("HighScore System")]
     public GameObject inputFieldPlayerName;
     public GameObject highScoreDisplay;
-    public List<HighScore> highScores;
+    public GameObject pressStartPseudo;
+    public GameObject enterPseudo;
+    public HighScoreList highScores;
     string playerName;
     string filePath;
 
@@ -101,13 +103,12 @@ public class GameController : MonoBehaviour
     {
         filePath = Path.Combine(Application.persistentDataPath, "highscores.json");
         Debug.Log(filePath);
-        Debug.Log(highScores[0].score);
         saveHighScores();
         globalVolume.GetComponent<Volume>().profile.TryGet(out lensDistortion);
         Instance = this;
         levelNumber = 1;
         score = 0;
-        switchState("end");
+        switchState("startMenu");
         controls = new Controls();
         controls.Gameplay.Enable();
         canMove = false;
@@ -210,20 +211,13 @@ public class GameController : MonoBehaviour
                 break;
 
             case "highScore":
-                loadHighScores();
-                highScoreDisplay.GetComponent<TextMeshProUGUI>().text = highScores[0].playerName + " " + highScores[0].score + " " + highScores[0].level;
-
-
-                break;
-
-            case "restart":
                 if (controls.Gameplay.Start.triggered)
                 {
-                    switchState("running");
+                    switchState("startMenu");
                     restart();
                 }
-                break;
 
+                break;
 
             case "startMenu":
                 if (controls.Gameplay.Start.triggered)
@@ -241,6 +235,7 @@ public class GameController : MonoBehaviour
         switch (nexState)
         {
             case "running":
+                pressStartHighScoreTextDisplay.SetActive(false);
                 highScoreDisplay.SetActive(false);
                 levelDisplay.SetActive(true);
                 scoreTextDisplay.SetActive(true);
@@ -259,6 +254,7 @@ public class GameController : MonoBehaviour
                 if (vibrationHappening == null) StartCoroutine(vibration(0.2f, 0.5f, 0.5f));
                 break;
             case "betweenLevel":
+                pressStartHighScoreTextDisplay.SetActive(false);
                 highScoreDisplay.SetActive(false);
                 score += (int) Math.Round(inStreakScore * scoreMultiplicator);
                 inStreakScore = 0;
@@ -271,16 +267,18 @@ public class GameController : MonoBehaviour
                 freazeMultiplicatorTimer = true;
                 break;
             case "startMenu":
+                pressStartHighScoreTextDisplay.SetActive(false);
                 highScoreDisplay.SetActive(false);
                 getLensDistorsionTo(0.4f, 0.1f);
                 startTextDisplay.SetActive(true);
                 pressStartTextDisplay.SetActive(true);
+                endStreak();
                 break;
             case "end":
+                pressStartPseudo.SetActive(true);
+                enterPseudo.SetActive(true);
+                pressStartHighScoreTextDisplay.SetActive(false);
                 highScoreDisplay.SetActive(false);
-                levelDisplay.SetActive(false);
-                scoreTextDisplay.SetActive(false);
-                inStreakScoreDisplay.SetActive(false);
                 inputFieldPlayerName.SetActive(true);
                 inputFieldPlayerName.GetComponent<TMP_InputField>().ActivateInputField();
                 getLensDistorsionTo(0.4f, 0.1f);
@@ -288,37 +286,42 @@ public class GameController : MonoBehaviour
 
                 break;
             case "highScore":
+                pressStartPseudo.SetActive(false);
+                enterPseudo.SetActive(false);
                 inputFieldPlayerName.SetActive(false);
                 highScoreDisplay.SetActive(true);
+                levelDisplay.SetActive(false);
+                scoreTextDisplay.SetActive(false);
+                inStreakScoreDisplay.SetActive(false);
+                pressStartHighScoreTextDisplay.SetActive(true);
+                loadHighScores();
+                highScoreDisplay.GetComponent<TextMeshProUGUI>().text = "";
+                for (int i = 0; i < highScores.HighScoresList.Count; i++)
+                {
+                    highScoreDisplay.GetComponent<TextMeshProUGUI>().text += (i+1) + " " + highScores.HighScoresList[i].playerName + " " + highScores.HighScoresList[i].score + " " + highScores.HighScoresList[i].level + "\n";
+                }
 
-                break;
-            case "restart":
-                highScoreDisplay.SetActive(false);
-                getLensDistorsionTo(0.4f, 0.1f);
-                restartTextDisplay.SetActive(true);
-                pressStartTextDisplay.SetActive(true);
-                endStreak();
                 break;
         }
     }
 
     public void saveHighScores()
     {
-        //string json = JsonUtility.ToJson(highScores, true);
-        //File.WriteAllText(filePath, json);
+        string json = JsonUtility.ToJson(highScores, true);
+        File.WriteAllText(filePath, json);
     }
 
     public void loadHighScores()
     {
         string json = File.ReadAllText(filePath);
-        highScores = JsonUtility.FromJson<List<HighScore>>(json);
+        highScores = JsonUtility.FromJson<HighScoreList>(json);
     }
 
     public void addHighScores(int score, string playerName, int level)
     {
         loadHighScores();
-        highScores.Add(new HighScore(score, playerName, level));
-        highScores.Sort(new HighScoreCompare().Compare);
+        highScores.HighScoresList.Add(new HighScore(score, playerName, level));
+        highScores.HighScoresList.Sort(new HighScoreCompare().Compare);
         saveHighScores();
     }
 
@@ -383,7 +386,6 @@ public class GameController : MonoBehaviour
     {
         GameController.Instance.score = 0;
         levelNumber = 1;
-        startLevel(levelNumber);
     }
 
     void startLevel(int levelNumber)
