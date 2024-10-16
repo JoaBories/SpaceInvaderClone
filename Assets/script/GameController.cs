@@ -1,12 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+
+
+public class HighScoreCompare
+{
+    public int Compare(HighScore x, HighScore y)
+    {
+        return -x.score.CompareTo(y.score);
+    }
+}
+
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
@@ -79,9 +90,15 @@ public class GameController : MonoBehaviour
     public AudioClip missSound;
     public AudioClip looseShieldSound;
 
+    [Header("HighScore System")]
+    public GameObject TextInputDisplay;
+    public GameObject inputFieldPlayerName;
+    public List<HighScore> highScores;
+    string filePath;
 
     void Start()
     {
+        filePath = Path.Combine(Application.persistentDataPath, "highscores.json");
         globalVolume.GetComponent<Volume>().profile.TryGet(out lensDistortion);
         Instance = this;
         levelNumber = 1;
@@ -159,12 +176,12 @@ public class GameController : MonoBehaviour
                 }
 
                 if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= shieldTop.transform.position.y && shieldBool) desactivateShields();
-                if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= earthLevel.transform.position.y) switchState("loose");
+                if (alienGroup.GetComponent<AlienGroup>().bottomAlienPos() <= earthLevel.transform.position.y) switchState("end");
                 if (!alienGroup.activeSelf)
                 {
                     levelNumber++;
                     playSoundClip(finishWaveSound, transform);
-                    if (levelNumber > levelSpecsList.Count) switchState("win");
+                    if (levelNumber > levelSpecsList.Count) switchState("end");
                     else switchState("betweenLevel");
                 }
                 break;
@@ -177,8 +194,16 @@ public class GameController : MonoBehaviour
                 }
                 break;
 
-            case "win":
+            case "end":
                 alienGroup.SetActive(false);
+
+                break;
+
+            case "highScore":
+
+                break;
+
+            case "restart":
                 if (controls.Gameplay.Start.triggered)
                 {
                     switchState("running");
@@ -186,14 +211,6 @@ public class GameController : MonoBehaviour
                 }
                 break;
 
-            case "loose":
-                alienGroup.SetActive(false);
-                if (controls.Gameplay.Start.triggered)
-                {
-                    switchState("running");
-                    restart();
-                }
-                break;
 
             case "startMenu":
                 if (controls.Gameplay.Start.triggered)
@@ -240,19 +257,41 @@ public class GameController : MonoBehaviour
                 startTextDisplay.SetActive(true);
                 pressStartTextDisplay.SetActive(true);
                 break;
-            case "win":
+            case "end":
                 getLensDistorsionTo(0.4f, 0.1f);
-                restartTextDisplay.SetActive(true);
-                pressStartTextDisplay.SetActive(true);
                 endStreak();
+
                 break;
-            case "loose":
+            case "highScore":
+
+                break;
+            case "restart":
                 getLensDistorsionTo(0.4f, 0.1f);
                 restartTextDisplay.SetActive(true);
                 pressStartTextDisplay.SetActive(true);
                 endStreak();
                 break;
         }
+    }
+
+    public void saveHighScores()
+    {
+        string json = JsonUtility.ToJson(highScores, true);
+        File.WriteAllText(filePath, json);
+    }
+
+    public void loadHighScores()
+    {
+        string json = File.ReadAllText(filePath);
+        highScores = JsonUtility.FromJson<List<HighScore>>(json);
+    }
+
+    public void addHighScores(int score, string playerName, int level)
+    {
+        loadHighScores();
+        highScores.Add(new HighScore(score, playerName, level));
+        highScores.Sort(new HighScoreCompare().Compare);
+        saveHighScores();
     }
 
     void getLensDistorsionTo(float goal, float time)
